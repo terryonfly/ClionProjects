@@ -1,5 +1,9 @@
-//#include <GL/glut.h>
+#include "platform.h"
+#ifdef APPLE
 #include <GLUT/GLUT.h>
+#else
+#include <GL/glut.h>
+#endif
 
 void init(void){
     glClearColor(0.0,0.0,0.0,0.0);
