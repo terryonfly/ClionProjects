@@ -149,26 +149,27 @@ printf("%f\n", dst);
 
 void tcpclient_content_decode(unsigned char *buf, size_t len)
 {
+    unsigned char i;
     unsigned char* px = buf;
     void *pf;
 
     float angle_x;
     pf = &angle_x;
-    for(unsigned char i = 0; i < 4; i ++) {
+    for(i = 0; i < 4; i ++) {
         *((unsigned char*)pf+i) = *(px++);
     }
     rotate_angle_x = angle_x;
 
     float angle_y;
     pf = &angle_y;
-    for(unsigned char i = 0; i < 4; i ++) {
+    for(i = 0; i < 4; i ++) {
         *((unsigned char*)pf+i) = *(px++);
     }
     rotate_angle_y = angle_y;
 
     float angle_z;
     pf = &angle_z;
-    for(unsigned char i = 0; i < 4; i ++) {
+    for(i = 0; i < 4; i ++) {
         *((unsigned char*)pf+i) = *(px++);
     }
     rotate_angle_z = angle_z;
