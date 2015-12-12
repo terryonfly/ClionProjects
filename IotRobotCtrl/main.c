@@ -134,6 +134,7 @@ const static GLint quads_index[][4] = {
 };
 
 void display(void) {
+    int i, j;
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glMatrixMode(GL_PROJECTION);
@@ -150,11 +151,11 @@ void display(void) {
     glMaterialfv(GL_FRONT, GL_SPECULAR, earth_mat);
     glMaterialf(GL_FRONT, GL_SHININESS, earth_mat_shininess);
     glBegin(GL_LINES);
-    for (int i = -100; i < 100; i++) {
+    for (i = -100; i < 100; i++) {
         glVertex3f(-10.0f, 0.0f, i / 10.0f);
         glVertex3f(10.0f, 0.0f, i / 10.0f);
     }
-    for (int i = -100; i < 100; i++) {
+    for (i = -100; i < 100; i++) {
         glVertex3f(i / 10.0f, 0.0f, -10.0f);
         glVertex3f(i / 10.0f, 0.0f, 10.0f);
     }
@@ -177,7 +178,7 @@ void display(void) {
     glRotatef(angle_y, 0.0f, 0.0f, -1.0f);
 //    glTranslatef(0.0f, 0.0f, 0.0f);
     glBegin(GL_QUADS);
-    for (int i = 0; i < 42; i++) {
+    for (i = 0; i < 42; i++) {
         if ((i >= 19 && i <= 22) || (i >= 37 && i <= 40)) {
             GLfloat earth_mat[] = {0.5f, 0.0f, 0.0f, 1.0f};
             GLfloat earth_mat_shininess = 128.0f;
@@ -207,7 +208,7 @@ void display(void) {
             glMaterialfv(GL_FRONT, GL_SPECULAR, earth_mat);
             glMaterialf(GL_FRONT, GL_SHININESS, earth_mat_shininess);
         }
-        for (int j = 0; j < 4; j++) {
+        for (j = 0; j < 4; j++) {
             glVertex3f(vertext_list[quads_index[i][j]][0],
                        vertext_list[quads_index[i][j]][1],
                        vertext_list[quads_index[i][j]][2]);
