@@ -63,7 +63,7 @@ void tcpclient_run(void) {
     struct hostent *he; /* structure that will get information about remote host */
     struct sockaddr_in server;
 
-    if ((he = gethostbyname("192.168.101.121")) == NULL) {
+    if ((he = gethostbyname("192.168.0.150")) == NULL) {
         perror("gethostbyname() error\n");
         return;
     }

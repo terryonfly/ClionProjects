@@ -140,6 +140,19 @@ void display(void) {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluPerspective(30, 1, 1, 40);
+
+    GLfloat sun_light_position[] = {0.5f, 0.5f, 0.5f, 0.5f};
+    GLfloat sun_light_ambient[] = {0.0f, 0.0f, 0.0f, 1.0f};
+    GLfloat sun_light_diffuse[] = {1.0f, 1.0f, 1.0f, 1.0f};
+    GLfloat sun_light_specular[] = {1.0f, 1.0f, 1.0f, 1.0f};
+    glLightfv(GL_LIGHT0, GL_POSITION, sun_light_position);
+    glLightfv(GL_LIGHT0, GL_AMBIENT, sun_light_ambient);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, sun_light_diffuse);
+    glLightfv(GL_LIGHT0, GL_SPECULAR, sun_light_specular);
+    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);
+    glEnable(GL_DEPTH_TEST);
+
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     gluLookAt(0, 1.5, 3, 0, 0, 0, 0, 1, 0);
@@ -160,18 +173,6 @@ void display(void) {
         glVertex3f(i / 10.0f, 0.0f, 10.0f);
     }
     glEnd();
-
-    GLfloat sun_light_position[] = {0.5f, 0.5f, 0.5f, 0.5f};
-    GLfloat sun_light_ambient[] = {0.0f, 0.0f, 0.0f, 1.0f};
-    GLfloat sun_light_diffuse[] = {1.0f, 1.0f, 1.0f, 1.0f};
-    GLfloat sun_light_specular[] = {1.0f, 1.0f, 1.0f, 1.0f};
-    glLightfv(GL_LIGHT0, GL_POSITION, sun_light_position);
-    glLightfv(GL_LIGHT0, GL_AMBIENT, sun_light_ambient);
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, sun_light_diffuse);
-    glLightfv(GL_LIGHT0, GL_SPECULAR, sun_light_specular);
-    glEnable(GL_LIGHTING);
-    glEnable(GL_LIGHT0);
-    glEnable(GL_DEPTH_TEST);
 
 //    glColor3f(1.0f, 1.0f, 0.0f);
     glRotatef(angle_y, 0.0f, 1.0f, 0.0f);
@@ -235,7 +236,7 @@ int main(int argc, char *argv[]) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
     glutInitWindowPosition(100, 100);
-    glutInitWindowSize(400, 400);
+    glutInitWindowSize(1000, 1000);
     glutCreateWindow("T'Lab");
     glutDisplayFunc(&display);
     glutIdleFunc(&idle);
