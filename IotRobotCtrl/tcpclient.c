@@ -39,6 +39,10 @@ float rotate_angle_x = 0.0;
 float rotate_angle_y = 0.0;
 float rotate_angle_z = 0.0;
 
+float rotate_angle_x_real = 0.0;
+float rotate_angle_y_real = 0.0;
+float rotate_angle_z_real = 0.0;
+
 int tcpclient_init(void) {
     int ret;
     thread_running = 1;
@@ -175,6 +179,27 @@ void tcpclient_content_decode(unsigned char *buf, size_t len)
         *((unsigned char*)pf+i) = *(px++);
     }
     rotate_angle_z = angle_z;
+
+    float angle_x_real;
+    pf = &angle_x_real;
+    for(i = 0; i < 4; i ++) {
+        *((unsigned char*)pf+i) = *(px++);
+    }
+    rotate_angle_x_real = angle_x_real;
+
+    float angle_y_real;
+    pf = &angle_y_real;
+    for(i = 0; i < 4; i ++) {
+        *((unsigned char*)pf+i) = *(px++);
+    }
+    rotate_angle_y_real = angle_y_real;
+
+    float angle_z_real;
+    pf = &angle_z_real;
+    for(i = 0; i < 4; i ++) {
+        *((unsigned char*)pf+i) = *(px++);
+    }
+    rotate_angle_z_real = angle_z_real;
 }
 
 int tcpclient_send(unsigned char *buf, size_t len)
@@ -221,4 +246,19 @@ float get_rotate_angle_y(void)
 float get_rotate_angle_z(void)
 {
     return rotate_angle_z;
+}
+
+float get_rotate_angle_x_real(void)
+{
+    return rotate_angle_x_real;
+}
+
+float get_rotate_angle_y_real(void)
+{
+    return rotate_angle_y_real;
+}
+
+float get_rotate_angle_z_real(void)
+{
+    return rotate_angle_z_real;
 }

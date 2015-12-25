@@ -22,6 +22,10 @@ static double angle_x = 0.f;
 static double angle_y = 0.f;
 static double angle_z = 0.f;
 
+static double angle_x_real = 0.f;
+static double angle_y_real = 0.f;
+static double angle_z_real = 0.f;
+
 const static GLfloat vertext_list[][3] = {
         // 0
         0.0f, 0.05f, 0.1f,
@@ -141,7 +145,7 @@ void display(void) {
     glLoadIdentity();
     gluPerspective(30, 1, 1, 40);
 
-    GLfloat sun_light_position[] = {0.5f, 0.5f, 0.5f, 0.5f};
+    GLfloat sun_light_position[] = {1.5f, 1.5f, -1.5f, 0.0f};
     GLfloat sun_light_ambient[] = {0.0f, 0.0f, 0.0f, 1.0f};
     GLfloat sun_light_diffuse[] = {1.0f, 1.0f, 1.0f, 1.0f};
     GLfloat sun_light_specular[] = {1.0f, 1.0f, 1.0f, 1.0f};
@@ -149,15 +153,33 @@ void display(void) {
     glLightfv(GL_LIGHT0, GL_AMBIENT, sun_light_ambient);
     glLightfv(GL_LIGHT0, GL_DIFFUSE, sun_light_diffuse);
     glLightfv(GL_LIGHT0, GL_SPECULAR, sun_light_specular);
+    GLfloat sun_light_position_1[] = {1.5f, 1.5f, 1.5f, 0.0f};
+    glLightfv(GL_LIGHT1, GL_POSITION, sun_light_position_1);
+    glLightfv(GL_LIGHT1, GL_AMBIENT, sun_light_ambient);
+    glLightfv(GL_LIGHT1, GL_DIFFUSE, sun_light_diffuse);
+    glLightfv(GL_LIGHT1, GL_SPECULAR, sun_light_specular);
+    GLfloat sun_light_position_2[] = {-1.5f, 1.5f, -1.5f, 0.0f};
+    glLightfv(GL_LIGHT2, GL_POSITION, sun_light_position_2);
+    glLightfv(GL_LIGHT2, GL_AMBIENT, sun_light_ambient);
+    glLightfv(GL_LIGHT2, GL_DIFFUSE, sun_light_diffuse);
+    glLightfv(GL_LIGHT2, GL_SPECULAR, sun_light_specular);
+    GLfloat sun_light_position_3[] = {-1.5f, 1.5f, 1.5f, 0.0f};
+    glLightfv(GL_LIGHT3, GL_POSITION, sun_light_position_3);
+    glLightfv(GL_LIGHT3, GL_AMBIENT, sun_light_ambient);
+    glLightfv(GL_LIGHT3, GL_DIFFUSE, sun_light_diffuse);
+    glLightfv(GL_LIGHT3, GL_SPECULAR, sun_light_specular);
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
+    glEnable(GL_LIGHT1);
+    glEnable(GL_LIGHT2);
+    glEnable(GL_LIGHT3);
     glEnable(GL_DEPTH_TEST);
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     gluLookAt(0, 1.5, 3, 0, 0, 0, 0, 1, 0);
 
-    GLfloat earth_mat[] = {0.5f, 0.5f, 0.5f, 1.0f};
+    GLfloat earth_mat[] = {0.2f, 0.2f, 0.2f, 1.0f};
     GLfloat earth_mat_shininess = 128.0f;
     glMaterialfv(GL_FRONT, GL_AMBIENT, earth_mat);
     glMaterialfv(GL_FRONT, GL_DIFFUSE, earth_mat);
@@ -174,10 +196,13 @@ void display(void) {
     }
     glEnd();
 
+    double anglex_real = angle_x_real;
+    double angley_real = angle_y_real;
+    double anglez_real = angle_z_real;
 //    glColor3f(1.0f, 1.0f, 0.0f);
-    glRotatef(angle_y, 0.0f, 1.0f, 0.0f);
-    glRotatef(angle_x, 1.0f, 0.0f, 0.0f);
-    glRotatef(angle_z, 0.0f, 0.0f, 1.0f);
+    glRotatef(angley_real, 0.0f, 1.0f, 0.0f);
+    glRotatef(anglex_real, 1.0f, 0.0f, 0.0f);
+    glRotatef(anglez_real, 0.0f, 0.0f, 1.0f);
 //    glTranslatef(0.0f, 0.0f, 0.0f);
     glBegin(GL_QUADS);
     for (i = 0; i < 42; i++) {
@@ -217,6 +242,63 @@ void display(void) {
         }
     }
     glEnd();
+    glRotatef(-angley_real, 0.0f, 1.0f, 0.0f);
+    glRotatef(-anglex_real, 1.0f, 0.0f, 0.0f);
+    glRotatef(-anglez_real, 0.0f, 0.0f, 1.0f);
+
+    glEnable(GL_LINE_STIPPLE);
+    glLineStipple(2, 0x6666);
+//    glColor3f(1.0f, 1.0f, 0.0f);
+    double anglex_raw = angle_x;
+    double angley_raw = angle_y;
+    double anglez_raw = angle_z;
+    glRotatef(angley_raw, 0.0f, 1.0f, 0.0f);
+    glRotatef(anglex_raw, 1.0f, 0.0f, 0.0f);
+    glRotatef(anglez_raw, 0.0f, 0.0f, 1.0f);
+//    glTranslatef(0.0f, 0.1f, 0.0f);
+    glBegin(GL_LINES);
+    int b;
+    for (i = 0; i < 42; i++) {
+        GLfloat earth_mat[] = {0.8f, 0.8f, 0.8f, 1.0f};
+        GLfloat earth_mat_shininess = 128.0f;
+        glMaterialfv(GL_FRONT, GL_AMBIENT, earth_mat);
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, earth_mat);
+        glMaterialfv(GL_FRONT, GL_SPECULAR, earth_mat);
+        glMaterialf(GL_FRONT, GL_SHININESS, earth_mat_shininess);
+        for (j = 0; j < 4; j++) {
+            b = j - 1;
+            if (b < 0) b = 3;
+            glVertex3f(vertext_list[quads_index[i][j]][0],
+                       vertext_list[quads_index[i][j]][1],
+                       vertext_list[quads_index[i][j]][2]);
+            glVertex3f(vertext_list[quads_index[i][b]][0],
+                       vertext_list[quads_index[i][b]][1],
+                       vertext_list[quads_index[i][b]][2]);
+        }
+    }
+    glEnd();
+    glBegin(GL_QUADS);
+    for (i = 0; i < 42; i++) {
+        if ((i >= 19 && i <= 22) || (i >= 37 && i <= 40)) {
+            GLfloat earth_mat[] = {0.0f, 0.5f, 0.0f, 1.0f};
+            GLfloat earth_mat_shininess = 128.0f;
+            glMaterialfv(GL_FRONT, GL_AMBIENT, earth_mat);
+            glMaterialfv(GL_FRONT, GL_DIFFUSE, earth_mat);
+            glMaterialfv(GL_FRONT, GL_SPECULAR, earth_mat);
+            glMaterialf(GL_FRONT, GL_SHININESS, earth_mat_shininess);
+            for (j = 0; j < 4; j++) {
+                glVertex3f(vertext_list[quads_index[i][j]][0],
+                           vertext_list[quads_index[i][j]][1],
+                           vertext_list[quads_index[i][j]][2]);
+            }
+        }
+    }
+    glEnd();
+    glRotatef(-angley_raw, 0.0f, 1.0f, 0.0f);
+    glRotatef(-anglex_raw, 1.0f, 0.0f, 0.0f);
+    glRotatef(-anglez_raw, 0.0f, 0.0f, 1.0f);
+//    glTranslatef(0.0f, -0.1f, 0.0f);
+    glDisable(GL_LINE_STIPPLE);
 
     glFlush();
     glutSwapBuffers();
@@ -224,10 +306,12 @@ void display(void) {
 
 void idle(void)
 {
-    cos(0.1);
     angle_x = get_rotate_angle_x();
     angle_y = get_rotate_angle_y();
     angle_z = get_rotate_angle_z();
+    angle_x_real = get_rotate_angle_x_real();
+    angle_y_real = get_rotate_angle_y_real();
+    angle_z_real = get_rotate_angle_z_real();
     display();
 }
 
@@ -236,7 +320,7 @@ int main(int argc, char *argv[]) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
     glutInitWindowPosition(100, 100);
-    glutInitWindowSize(1000, 1000);
+    glutInitWindowSize(500, 500);
     glutCreateWindow("T'Lab");
     glutDisplayFunc(&display);
     glutIdleFunc(&idle);

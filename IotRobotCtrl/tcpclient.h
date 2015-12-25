@@ -23,4 +23,10 @@ float get_rotate_angle_y(void);
 
 float get_rotate_angle_z(void);
 
+float get_rotate_angle_x_real(void);
+
+float get_rotate_angle_y_real(void);
+
+float get_rotate_angle_z_real(void);
+
 #endif //IOTROBOTCTRL_TCPCLIENT_H
