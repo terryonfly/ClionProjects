@@ -57,39 +57,41 @@ void tcpclient_release(void) {
 }
 
 void tcpclient_run(void) {
-    printf("start connect\n");
-    int num; /* files descriptors */
-    unsigned char buf[MAXDATASIZE]; /* buf will store received text */
-    struct hostent *he; /* structure that will get information about remote host */
-    struct sockaddr_in server;
-
-    if ((he = gethostbyname("192.168.0.150")) == NULL) {
-        perror("gethostbyname() error\n");
-        return;
-    }
-
-    if ((sock_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
-        perror("socket() error\n");
-        return;
-    }
-    bzero(&server, sizeof(server));
-    server.sin_family = AF_INET;
-    server.sin_port = htons(PORT);
-    server.sin_addr = *((struct in_addr *)he->h_addr);
-    while (connect(sock_fd, (struct sockaddr *)&server, sizeof(server)) == -1) {
-        perror("try connect() error\n");
-        sleep(3);
-    }
-    printf("connect() successes\n");
-
     while (thread_running) {
-        if ((num = recv(sock_fd, buf, MAXDATASIZE, 0)) == -1) {
-            perror("recv() error\n");
+        int num; /* files descriptors */
+        unsigned char buf[MAXDATASIZE]; /* buf will store received text */
+        struct hostent *he; /* structure that will get information about remote host */
+        struct sockaddr_in server;
+
+        if ((he = gethostbyname("192.168.101.121")) == NULL) {
+            perror("gethostbyname() error ");
+            return;
         }
-        tcpclient_data_decode(buf, num);
+
+        if ((sock_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+            perror("socket() error ");
+            return;
+        }
+        bzero(&server, sizeof(server));
+        server.sin_family = AF_INET;
+        server.sin_port = htons(PORT);
+        server.sin_addr = *((struct in_addr *)he->h_addr);
+        if (connect(sock_fd, (struct sockaddr *)&server, sizeof(server)) == -1) {
+            perror("try connect() error ");
+        } else {
+            printf("connect() successes\n");
+        }
+        while (thread_running) {
+            if ((num = recv(sock_fd, buf, MAXDATASIZE, 0)) == -1) {
+                perror("recv() error \n");
+            }
+            if (num == 0) break;
+            tcpclient_data_decode(buf, num);
+        }
+        close(sock_fd);
+        sock_fd = -1;
+        sleep(1);
     }
-    close(sock_fd);
-    sock_fd = -1;
 }
 
 void tcpclient_data_decode(unsigned char *buf, size_t len) {
@@ -200,7 +202,7 @@ int tcpclient_send(unsigned char *buf, size_t len)
     set_i ++;
     if ((send_len = send(sock_fd, send_data, set_i, 0)) == -1) {
         printf("send_len = %d\n", send_len);
-        perror("send failure\n");
+        perror("send() failure ");
         return -1;
     }
     return 0;
