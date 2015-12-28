@@ -17,16 +17,12 @@ void tcpclient_content_decode(unsigned char *buf, size_t len);
 
 int tcpclient_send(unsigned char *buf, size_t len);
 
-float get_rotate_angle_x(void);
+float get_rotate_a(void);
 
-float get_rotate_angle_y(void);
+float get_rotate_x(void);
 
-float get_rotate_angle_z(void);
+float get_rotate_y(void);
 
-float get_rotate_angle_x_real(void);
-
-float get_rotate_angle_y_real(void);
-
-float get_rotate_angle_z_real(void);
+float get_rotate_z(void);
 
 #endif //IOTROBOTCTRL_TCPCLIENT_H

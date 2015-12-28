@@ -18,13 +18,10 @@
 
 #include "tcpclient.h"
 
-static double angle_x = 0.f;
-static double angle_y = 0.f;
-static double angle_z = 0.f;
-
-static double angle_x_real = 0.f;
-static double angle_y_real = 0.f;
-static double angle_z_real = 0.f;
+static double rotate_a = 0.f;
+static double rotate_x = 0.f;
+static double rotate_y = 0.f;
+static double rotate_z = 0.f;
 
 const static GLfloat vertext_list[][3] = {
         // 0
@@ -196,13 +193,12 @@ void display(void) {
     }
     glEnd();
 
-    double anglex_real = angle_x_real;
-    double angley_real = angle_y_real;
-    double anglez_real = angle_z_real;
+    double rotate_a_real = rotate_a;
+    double rotate_x_real = rotate_x;
+    double rotate_y_real = rotate_y;
+    double rotate_z_real = rotate_z;
 //    glColor3f(1.0f, 1.0f, 0.0f);
-    glRotatef(angley_real, 0.0f, 1.0f, 0.0f);
-    glRotatef(anglex_real, 1.0f, 0.0f, 0.0f);
-    glRotatef(anglez_real, 0.0f, 0.0f, 1.0f);
+    glRotatef(rotate_a_real, rotate_x_real, rotate_y_real, rotate_z_real);
 //    glTranslatef(0.0f, 0.0f, 0.0f);
     glBegin(GL_QUADS);
     for (i = 0; i < 42; i++) {
@@ -242,10 +238,8 @@ void display(void) {
         }
     }
     glEnd();
-    glRotatef(-angley_real, 0.0f, 1.0f, 0.0f);
-    glRotatef(-anglex_real, 1.0f, 0.0f, 0.0f);
-    glRotatef(-anglez_real, 0.0f, 0.0f, 1.0f);
 
+    /*
     glEnable(GL_LINE_STIPPLE);
     glLineStipple(2, 0x6666);
 //    glColor3f(1.0f, 1.0f, 0.0f);
@@ -299,6 +293,7 @@ void display(void) {
     glRotatef(-anglez_raw, 0.0f, 0.0f, 1.0f);
 //    glTranslatef(0.0f, -0.1f, 0.0f);
     glDisable(GL_LINE_STIPPLE);
+     */
 
     glFlush();
     glutSwapBuffers();
@@ -306,12 +301,10 @@ void display(void) {
 
 void idle(void)
 {
-    angle_x = get_rotate_angle_x();
-    angle_y = get_rotate_angle_y();
-    angle_z = get_rotate_angle_z();
-    angle_x_real = get_rotate_angle_x_real();
-    angle_y_real = get_rotate_angle_y_real();
-    angle_z_real = get_rotate_angle_z_real();
+    rotate_a = get_rotate_a();
+    rotate_x = get_rotate_x();
+    rotate_y = get_rotate_y();
+    rotate_z = get_rotate_z();
     display();
 }
 
@@ -320,7 +313,7 @@ int main(int argc, char *argv[]) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
     glutInitWindowPosition(100, 100);
-    glutInitWindowSize(500, 500);
+    glutInitWindowSize(1000, 1000);
     glutCreateWindow("T'Lab");
     glutDisplayFunc(&display);
     glutIdleFunc(&idle);

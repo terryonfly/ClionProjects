@@ -35,13 +35,10 @@ unsigned char rev_current_cmd;
 #define MAX_SEND_DATA_LEN 1024
 unsigned char send_data[MAX_SEND_DATA_LEN];
 
-float rotate_angle_x = 0.0;
-float rotate_angle_y = 0.0;
-float rotate_angle_z = 0.0;
-
-float rotate_angle_x_real = 0.0;
-float rotate_angle_y_real = 0.0;
-float rotate_angle_z_real = 0.0;
+float rotate_a = 0.0;
+float rotate_x = 0.0;
+float rotate_y = 0.0;
+float rotate_z = 0.0;
 
 int tcpclient_init(void) {
     int ret;
@@ -67,7 +64,7 @@ void tcpclient_run(void) {
         struct hostent *he; /* structure that will get information about remote host */
         struct sockaddr_in server;
 
-        if ((he = gethostbyname("192.168.101.121")) == NULL) {
+        if ((he = gethostbyname("192.168.0.151")) == NULL) {
             perror("gethostbyname() error ");
             return;
         }
@@ -84,13 +81,13 @@ void tcpclient_run(void) {
             perror("try connect() error ");
         } else {
             printf("connect() successes\n");
-        }
-        while (thread_running) {
-            if ((num = recv(sock_fd, buf, MAXDATASIZE, 0)) == -1) {
-                perror("recv() error \n");
+            while (thread_running) {
+                if ((num = recv(sock_fd, buf, MAXDATASIZE, 0)) == -1) {
+                    perror("recv() error \n");
+                }
+                if (num == 0) break;
+                tcpclient_data_decode(buf, num);
             }
-            if (num == 0) break;
-            tcpclient_data_decode(buf, num);
         }
         close(sock_fd);
         sock_fd = -1;
@@ -159,47 +156,33 @@ void tcpclient_content_decode(unsigned char *buf, size_t len)
     unsigned char* px = buf;
     void *pf;
 
-    float angle_x;
-    pf = &angle_x;
+    float a;
+    pf = &a;
     for(i = 0; i < 4; i ++) {
         *((unsigned char*)pf+i) = *(px++);
     }
-    rotate_angle_x = angle_x;
+    rotate_a = a;
 
-    float angle_y;
-    pf = &angle_y;
+    float x;
+    pf = &x;
     for(i = 0; i < 4; i ++) {
         *((unsigned char*)pf+i) = *(px++);
     }
-    rotate_angle_y = angle_y;
+    rotate_x = x;
 
-    float angle_z;
-    pf = &angle_z;
+    float y;
+    pf = &y;
     for(i = 0; i < 4; i ++) {
         *((unsigned char*)pf+i) = *(px++);
     }
-    rotate_angle_z = angle_z;
+    rotate_y = y;
 
-    float angle_x_real;
-    pf = &angle_x_real;
+    float z;
+    pf = &z;
     for(i = 0; i < 4; i ++) {
         *((unsigned char*)pf+i) = *(px++);
     }
-    rotate_angle_x_real = angle_x_real;
-
-    float angle_y_real;
-    pf = &angle_y_real;
-    for(i = 0; i < 4; i ++) {
-        *((unsigned char*)pf+i) = *(px++);
-    }
-    rotate_angle_y_real = angle_y_real;
-
-    float angle_z_real;
-    pf = &angle_z_real;
-    for(i = 0; i < 4; i ++) {
-        *((unsigned char*)pf+i) = *(px++);
-    }
-    rotate_angle_z_real = angle_z_real;
+    rotate_z = z;
 }
 
 int tcpclient_send(unsigned char *buf, size_t len)
@@ -233,32 +216,22 @@ int tcpclient_send(unsigned char *buf, size_t len)
     return 0;
 }
 
-float get_rotate_angle_x(void)
+float get_rotate_a(void)
 {
-    return rotate_angle_x;
+    return rotate_a;
 }
 
-float get_rotate_angle_y(void)
+float get_rotate_x(void)
 {
-    return rotate_angle_y;
+    return rotate_x;
 }
 
-float get_rotate_angle_z(void)
+float get_rotate_y(void)
 {
-    return rotate_angle_z;
+    return rotate_y;
 }
 
-float get_rotate_angle_x_real(void)
+float get_rotate_z(void)
 {
-    return rotate_angle_x_real;
-}
-
-float get_rotate_angle_y_real(void)
-{
-    return rotate_angle_y_real;
-}
-
-float get_rotate_angle_z_real(void)
-{
-    return rotate_angle_z_real;
+    return rotate_z;
 }
