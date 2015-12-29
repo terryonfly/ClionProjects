@@ -18,11 +18,6 @@
 
 #include "tcpclient.h"
 
-static double rotate_a = 0.f;
-static double rotate_x = 0.f;
-static double rotate_y = 0.f;
-static double rotate_z = 0.f;
-
 const static GLfloat vertext_list[][3] = {
         // 0
         0.0f, 0.05f, 0.1f,
@@ -193,12 +188,8 @@ void display(void) {
     }
     glEnd();
 
-    double rotate_a_real = rotate_a;
-    double rotate_x_real = rotate_x;
-    double rotate_y_real = rotate_y;
-    double rotate_z_real = rotate_z;
 //    glColor3f(1.0f, 1.0f, 0.0f);
-    glRotatef(rotate_a_real, rotate_x_real, rotate_y_real, rotate_z_real);
+    glRotatef(rotate_a, rotate_x, rotate_y, rotate_z);
 //    glTranslatef(0.0f, 0.0f, 0.0f);
     glBegin(GL_QUADS);
     for (i = 0; i < 42; i++) {
@@ -238,6 +229,48 @@ void display(void) {
         }
     }
     glEnd();
+
+    // Accel
+    {
+        GLfloat earth_mat[] = {0.0f, 0.5f, 0.5f, 1.0f};
+        GLfloat earth_mat_shininess = 128.0f;
+        glMaterialfv(GL_FRONT, GL_AMBIENT, earth_mat);
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, earth_mat);
+        glMaterialfv(GL_FRONT, GL_SPECULAR, earth_mat);
+        glMaterialf(GL_FRONT, GL_SHININESS, earth_mat_shininess);
+    }
+    glBegin(GL_LINES);
+    glVertex3f(0,
+               0,
+               0);
+    glVertex3f(accel_x / 2, accel_y / 2, accel_z / 2);
+    glEnd();
+    glTranslatef(accel_x / 2, accel_y / 2, accel_z / 2);
+    glutWireSphere(0.01, 20, 20);
+    glTranslatef(-accel_x / 2, -accel_y / 2, -accel_z / 2);
+
+    rotate_a += 180;
+    while (rotate_a >= 360) rotate_a -= 360;
+    glRotatef(-rotate_a, rotate_x, rotate_y, rotate_z);
+
+    // Magnet
+    {
+        GLfloat earth_mat[] = {0.0f, 1.0f, 0.0f, 1.0f};
+        GLfloat earth_mat_shininess = 128.0f;
+        glMaterialfv(GL_FRONT, GL_AMBIENT, earth_mat);
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, earth_mat);
+        glMaterialfv(GL_FRONT, GL_SPECULAR, earth_mat);
+        glMaterialf(GL_FRONT, GL_SHININESS, earth_mat_shininess);
+    }
+    glBegin(GL_LINES);
+    glVertex3f(0,
+               0,
+               0);
+    glVertex3f(magnet_x / 100, magnet_y / 100, magnet_z / 100);
+    glEnd();
+    glTranslatef(magnet_x / 100, magnet_y / 100, magnet_z / 100);
+    glutWireSphere(0.01, 20, 20);
+    glTranslatef(-magnet_x / 100, -magnet_y / 100, -magnet_z / 100);
 
     /*
     glEnable(GL_LINE_STIPPLE);
@@ -301,10 +334,6 @@ void display(void) {
 
 void idle(void)
 {
-    rotate_a = get_rotate_a();
-    rotate_x = get_rotate_x();
-    rotate_y = get_rotate_y();
-    rotate_z = get_rotate_z();
     display();
 }
 

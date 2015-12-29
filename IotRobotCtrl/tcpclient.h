@@ -5,6 +5,19 @@
 #ifndef IOTROBOTCTRL_TCPCLIENT_H
 #define IOTROBOTCTRL_TCPCLIENT_H
 
+extern float rotate_a;
+extern float rotate_x;
+extern float rotate_y;
+extern float rotate_z;
+
+extern float accel_x;
+extern float accel_y;
+extern float accel_z;
+
+extern float magnet_x;
+extern float magnet_y;
+extern float magnet_z;
+
 int tcpclient_init(void);
 
 void tcpclient_release(void);
@@ -16,13 +29,5 @@ void tcpclient_data_decode(unsigned char *buf, size_t len);
 void tcpclient_content_decode(unsigned char *buf, size_t len);
 
 int tcpclient_send(unsigned char *buf, size_t len);
-
-float get_rotate_a(void);
-
-float get_rotate_x(void);
-
-float get_rotate_y(void);
-
-float get_rotate_z(void);
 
 #endif //IOTROBOTCTRL_TCPCLIENT_H

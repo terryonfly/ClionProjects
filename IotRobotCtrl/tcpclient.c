@@ -35,10 +35,18 @@ unsigned char rev_current_cmd;
 #define MAX_SEND_DATA_LEN 1024
 unsigned char send_data[MAX_SEND_DATA_LEN];
 
-float rotate_a = 0.0;
+float rotate_a = 1.0;
 float rotate_x = 0.0;
 float rotate_y = 0.0;
 float rotate_z = 0.0;
+
+float accel_x = 0.0;
+float accel_y = 1.0;
+float accel_z = 0.0;
+
+float magnet_x = 0.0;
+float magnet_y = 0.0;
+float magnet_z = 1.0;
 
 int tcpclient_init(void) {
     int ret;
@@ -156,33 +164,55 @@ void tcpclient_content_decode(unsigned char *buf, size_t len)
     unsigned char* px = buf;
     void *pf;
 
-    float a;
-    pf = &a;
+    pf = &rotate_a;
     for(i = 0; i < 4; i ++) {
         *((unsigned char*)pf+i) = *(px++);
     }
-    rotate_a = a;
 
-    float x;
-    pf = &x;
+    pf = &rotate_x;
     for(i = 0; i < 4; i ++) {
         *((unsigned char*)pf+i) = *(px++);
     }
-    rotate_x = x;
 
-    float y;
-    pf = &y;
+    pf = &rotate_y;
     for(i = 0; i < 4; i ++) {
         *((unsigned char*)pf+i) = *(px++);
     }
-    rotate_y = y;
 
-    float z;
-    pf = &z;
+    pf = &rotate_z;
     for(i = 0; i < 4; i ++) {
         *((unsigned char*)pf+i) = *(px++);
     }
-    rotate_z = z;
+
+    pf = &accel_x;
+    for(i = 0; i < 4; i ++) {
+        *((unsigned char*)pf+i) = *(px++);
+    }
+
+    pf = &accel_y;
+    for(i = 0; i < 4; i ++) {
+        *((unsigned char*)pf+i) = *(px++);
+    }
+
+    pf = &accel_z;
+    for(i = 0; i < 4; i ++) {
+        *((unsigned char*)pf+i) = *(px++);
+    }
+
+    pf = &magnet_x;
+    for(i = 0; i < 4; i ++) {
+        *((unsigned char*)pf+i) = *(px++);
+    }
+
+    pf = &magnet_y;
+    for(i = 0; i < 4; i ++) {
+        *((unsigned char*)pf+i) = *(px++);
+    }
+
+    pf = &magnet_z;
+    for(i = 0; i < 4; i ++) {
+        *((unsigned char*)pf+i) = *(px++);
+    }
 }
 
 int tcpclient_send(unsigned char *buf, size_t len)
@@ -214,24 +244,4 @@ int tcpclient_send(unsigned char *buf, size_t len)
         return -1;
     }
     return 0;
-}
-
-float get_rotate_a(void)
-{
-    return rotate_a;
-}
-
-float get_rotate_x(void)
-{
-    return rotate_x;
-}
-
-float get_rotate_y(void)
-{
-    return rotate_y;
-}
-
-float get_rotate_z(void)
-{
-    return rotate_z;
 }
