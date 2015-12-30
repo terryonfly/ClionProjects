@@ -129,55 +129,22 @@ const static GLint quads_index[][4] = {
         23, 47, 24, 0,
 };
 
+float alpha = 0;
+
 void display(void) {
-    int i, j;
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluPerspective(30, 1, 1, 40);
-
-    GLfloat sun_light_position[] = {1.5f, 1.5f, -1.5f, 0.0f};
-    GLfloat sun_light_ambient[] = {0.0f, 0.0f, 0.0f, 1.0f};
-    GLfloat sun_light_diffuse[] = {1.0f, 1.0f, 1.0f, 1.0f};
-    GLfloat sun_light_specular[] = {1.0f, 1.0f, 1.0f, 1.0f};
-    glLightfv(GL_LIGHT0, GL_POSITION, sun_light_position);
-    glLightfv(GL_LIGHT0, GL_AMBIENT, sun_light_ambient);
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, sun_light_diffuse);
-    glLightfv(GL_LIGHT0, GL_SPECULAR, sun_light_specular);
-    GLfloat sun_light_position_1[] = {1.5f, 1.5f, 1.5f, 0.0f};
-    glLightfv(GL_LIGHT1, GL_POSITION, sun_light_position_1);
-    glLightfv(GL_LIGHT1, GL_AMBIENT, sun_light_ambient);
-    glLightfv(GL_LIGHT1, GL_DIFFUSE, sun_light_diffuse);
-    glLightfv(GL_LIGHT1, GL_SPECULAR, sun_light_specular);
-    GLfloat sun_light_position_2[] = {-1.5f, 1.5f, -1.5f, 0.0f};
-    glLightfv(GL_LIGHT2, GL_POSITION, sun_light_position_2);
-    glLightfv(GL_LIGHT2, GL_AMBIENT, sun_light_ambient);
-    glLightfv(GL_LIGHT2, GL_DIFFUSE, sun_light_diffuse);
-    glLightfv(GL_LIGHT2, GL_SPECULAR, sun_light_specular);
-    GLfloat sun_light_position_3[] = {-1.5f, 1.5f, 1.5f, 0.0f};
-    glLightfv(GL_LIGHT3, GL_POSITION, sun_light_position_3);
-    glLightfv(GL_LIGHT3, GL_AMBIENT, sun_light_ambient);
-    glLightfv(GL_LIGHT3, GL_DIFFUSE, sun_light_diffuse);
-    glLightfv(GL_LIGHT3, GL_SPECULAR, sun_light_specular);
-    glEnable(GL_LIGHTING);
-    glEnable(GL_LIGHT0);
-    glEnable(GL_LIGHT1);
-    glEnable(GL_LIGHT2);
-    glEnable(GL_LIGHT3);
-    glEnable(GL_DEPTH_TEST);
+//    GLfloat lightposition[] = {0.0, 0.0, 3.0, 1.0 };//光源位置
+//    glLightfv(GL_LIGHT0, GL_POSITION, lightposition);//........................................前
 
     glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
     glLoadIdentity();
-    gluLookAt(0, 1.5, 3, 0, 0, 0, 0, 1, 0);
+    gluLookAt(/*3 * sin(alpha * M_PI / 180)*/0, 1.5, /*3 * cos(alpha * M_PI / 180)*/3, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+//    glLightfv(GL_LIGHT0, GL_POSITION, lightposition);//............................................后
 
-    GLfloat earth_mat[] = {0.2f, 0.2f, 0.2f, 1.0f};
-    GLfloat earth_mat_shininess = 128.0f;
-    glMaterialfv(GL_FRONT, GL_AMBIENT, earth_mat);
-    glMaterialfv(GL_FRONT, GL_DIFFUSE, earth_mat);
-    glMaterialfv(GL_FRONT, GL_SPECULAR, earth_mat);
-    glMaterialf(GL_FRONT, GL_SHININESS, earth_mat_shininess);
     glBegin(GL_LINES);
+    int i, j;
     for (i = -100; i < 100; i++) {
         glVertex3f(-10.0f, 0.0f, i / 10.0f);
         glVertex3f(10.0f, 0.0f, i / 10.0f);
@@ -189,39 +156,43 @@ void display(void) {
     glEnd();
 
 //    glColor3f(1.0f, 1.0f, 0.0f);
-    glRotatef(rotate_a, rotate_x, rotate_y, rotate_z);
+//    glRotatef(rotate_a, rotate_x, rotate_y, rotate_z);
+    glRotatef(alpha, 0, 1, 0);
 //    glTranslatef(0.0f, 0.0f, 0.0f);
     glBegin(GL_QUADS);
     for (i = 0; i < 42; i++) {
-        if ((i >= 19 && i <= 22) || (i >= 37 && i <= 40)) {
-            GLfloat earth_mat[] = {0.5f, 0.0f, 0.0f, 1.0f};
-            GLfloat earth_mat_shininess = 128.0f;
-            glMaterialfv(GL_FRONT, GL_AMBIENT, earth_mat);
-            glMaterialfv(GL_FRONT, GL_DIFFUSE, earth_mat);
-            glMaterialfv(GL_FRONT, GL_SPECULAR, earth_mat);
-            glMaterialf(GL_FRONT, GL_SHININESS, earth_mat_shininess);
-        } else if (i < 9) {
-            GLfloat earth_mat[] = {1.0f, 0.5f, 0.0f, 1.0f};
-            GLfloat earth_mat_shininess = 128.0f;
-            glMaterialfv(GL_FRONT, GL_AMBIENT, earth_mat);
-            glMaterialfv(GL_FRONT, GL_DIFFUSE, earth_mat);
-            glMaterialfv(GL_FRONT, GL_SPECULAR, earth_mat);
-            glMaterialf(GL_FRONT, GL_SHININESS, earth_mat_shininess);
-        } else if (i < 18) {
-            GLfloat earth_mat[] = {0.25f, 0.125f, 0.0f, 1.0f};
-            GLfloat earth_mat_shininess = 128.0f;
-            glMaterialfv(GL_FRONT, GL_AMBIENT, earth_mat);
-            glMaterialfv(GL_FRONT, GL_DIFFUSE, earth_mat);
-            glMaterialfv(GL_FRONT, GL_SPECULAR, earth_mat);
-            glMaterialf(GL_FRONT, GL_SHININESS, earth_mat_shininess);
-        } else {
-            GLfloat earth_mat[] = {0.5f, 0.25f, 0.0f, 1.0f};
-            GLfloat earth_mat_shininess = 128.0f;
-            glMaterialfv(GL_FRONT, GL_AMBIENT, earth_mat);
-            glMaterialfv(GL_FRONT, GL_DIFFUSE, earth_mat);
-            glMaterialfv(GL_FRONT, GL_SPECULAR, earth_mat);
-            glMaterialf(GL_FRONT, GL_SHININESS, earth_mat_shininess);
-        }
+//        if ((i >= 19 && i <= 22) || (i >= 37 && i <= 40)) {
+////            GLfloat earth_mat[] = {0.5f, 0.0f, 0.0f, 1.0f};
+//            GLfloat earth_mat[] = {1.0f, 0.5f, 0.0f, 1.0f};
+//            GLfloat earth_mat_shininess = 128.0f;
+//            glMaterialfv(GL_FRONT, GL_AMBIENT, earth_mat);
+//            glMaterialfv(GL_FRONT, GL_DIFFUSE, earth_mat);
+//            glMaterialfv(GL_FRONT, GL_SPECULAR, earth_mat);
+//            glMaterialf(GL_FRONT, GL_SHININESS, earth_mat_shininess);
+//        } else if (i < 9) {
+//            GLfloat earth_mat[] = {1.0f, 0.5f, 0.0f, 1.0f};
+//            GLfloat earth_mat_shininess = 128.0f;
+//            glMaterialfv(GL_FRONT, GL_AMBIENT, earth_mat);
+//            glMaterialfv(GL_FRONT, GL_DIFFUSE, earth_mat);
+//            glMaterialfv(GL_FRONT, GL_SPECULAR, earth_mat);
+//            glMaterialf(GL_FRONT, GL_SHININESS, earth_mat_shininess);
+//        } else if (i < 18) {
+////            GLfloat earth_mat[] = {0.25f, 0.125f, 0.0f, 1.0f};
+//            GLfloat earth_mat[] = {1.0f, 0.5f, 0.0f, 1.0f};
+//            GLfloat earth_mat_shininess = 128.0f;
+//            glMaterialfv(GL_FRONT, GL_AMBIENT, earth_mat);
+//            glMaterialfv(GL_FRONT, GL_DIFFUSE, earth_mat);
+//            glMaterialfv(GL_FRONT, GL_SPECULAR, earth_mat);
+//            glMaterialf(GL_FRONT, GL_SHININESS, earth_mat_shininess);
+//        } else {
+////            GLfloat earth_mat[] = {0.5f, 0.25f, 0.0f, 1.0f};
+//            GLfloat earth_mat[] = {1.0f, 0.5f, 0.0f, 1.0f};
+//            GLfloat earth_mat_shininess = 128.0f;
+//            glMaterialfv(GL_FRONT, GL_AMBIENT, earth_mat);
+//            glMaterialfv(GL_FRONT, GL_DIFFUSE, earth_mat);
+//            glMaterialfv(GL_FRONT, GL_SPECULAR, earth_mat);
+//            glMaterialf(GL_FRONT, GL_SHININESS, earth_mat_shininess);
+//        }
         for (j = 0; j < 4; j++) {
             glVertex3f(vertext_list[quads_index[i][j]][0],
                        vertext_list[quads_index[i][j]][1],
@@ -230,124 +201,285 @@ void display(void) {
     }
     glEnd();
 
-    // Accel
-    {
-        GLfloat earth_mat[] = {0.0f, 0.5f, 0.5f, 1.0f};
-        GLfloat earth_mat_shininess = 128.0f;
-        glMaterialfv(GL_FRONT, GL_AMBIENT, earth_mat);
-        glMaterialfv(GL_FRONT, GL_DIFFUSE, earth_mat);
-        glMaterialfv(GL_FRONT, GL_SPECULAR, earth_mat);
-        glMaterialf(GL_FRONT, GL_SHININESS, earth_mat_shininess);
-    }
-    glBegin(GL_LINES);
-    glVertex3f(0,
-               0,
-               0);
-    glVertex3f(accel_x / 2, accel_y / 2, accel_z / 2);
-    glEnd();
-    glTranslatef(accel_x / 2, accel_y / 2, accel_z / 2);
-    glutWireSphere(0.01, 20, 20);
-    glTranslatef(-accel_x / 2, -accel_y / 2, -accel_z / 2);
-
-    float rotate_a_back = rotate_a + 180;
-    while (rotate_a_back >= 360) rotate_a_back -= 360;
-    glRotatef(-rotate_a_back, rotate_x, rotate_y, rotate_z);
-
-    // Magnet
-    {
-        GLfloat earth_mat[] = {0.0f, 1.0f, 0.0f, 1.0f};
-        GLfloat earth_mat_shininess = 128.0f;
-        glMaterialfv(GL_FRONT, GL_AMBIENT, earth_mat);
-        glMaterialfv(GL_FRONT, GL_DIFFUSE, earth_mat);
-        glMaterialfv(GL_FRONT, GL_SPECULAR, earth_mat);
-        glMaterialf(GL_FRONT, GL_SHININESS, earth_mat_shininess);
-    }
-    glBegin(GL_LINES);
-    glVertex3f(0,
-               0,
-               0);
-    glVertex3f(magnet_x / 100, magnet_y / 100, magnet_z / 100);
-    glEnd();
-    glTranslatef(magnet_x / 100, magnet_y / 100, magnet_z / 100);
-    glutWireSphere(0.01, 20, 20);
-    glTranslatef(-magnet_x / 100, -magnet_y / 100, -magnet_z / 100);
-
-    /*
-    glEnable(GL_LINE_STIPPLE);
-    glLineStipple(2, 0x6666);
-//    glColor3f(1.0f, 1.0f, 0.0f);
-    double anglex_raw = angle_x;
-    double angley_raw = angle_y;
-    double anglez_raw = angle_z;
-    glRotatef(angley_raw, 0.0f, 1.0f, 0.0f);
-    glRotatef(anglex_raw, 1.0f, 0.0f, 0.0f);
-    glRotatef(anglez_raw, 0.0f, 0.0f, 1.0f);
-//    glTranslatef(0.0f, 0.1f, 0.0f);
-    glBegin(GL_LINES);
-    int b;
-    for (i = 0; i < 42; i++) {
-        GLfloat earth_mat[] = {0.8f, 0.8f, 0.8f, 1.0f};
-        GLfloat earth_mat_shininess = 128.0f;
-        glMaterialfv(GL_FRONT, GL_AMBIENT, earth_mat);
-        glMaterialfv(GL_FRONT, GL_DIFFUSE, earth_mat);
-        glMaterialfv(GL_FRONT, GL_SPECULAR, earth_mat);
-        glMaterialf(GL_FRONT, GL_SHININESS, earth_mat_shininess);
-        for (j = 0; j < 4; j++) {
-            b = j - 1;
-            if (b < 0) b = 3;
-            glVertex3f(vertext_list[quads_index[i][j]][0],
-                       vertext_list[quads_index[i][j]][1],
-                       vertext_list[quads_index[i][j]][2]);
-            glVertex3f(vertext_list[quads_index[i][b]][0],
-                       vertext_list[quads_index[i][b]][1],
-                       vertext_list[quads_index[i][b]][2]);
-        }
-    }
-    glEnd();
-    glBegin(GL_QUADS);
-    for (i = 0; i < 42; i++) {
-        if ((i >= 19 && i <= 22) || (i >= 37 && i <= 40)) {
-            GLfloat earth_mat[] = {0.0f, 0.5f, 0.0f, 1.0f};
-            GLfloat earth_mat_shininess = 128.0f;
-            glMaterialfv(GL_FRONT, GL_AMBIENT, earth_mat);
-            glMaterialfv(GL_FRONT, GL_DIFFUSE, earth_mat);
-            glMaterialfv(GL_FRONT, GL_SPECULAR, earth_mat);
-            glMaterialf(GL_FRONT, GL_SHININESS, earth_mat_shininess);
-            for (j = 0; j < 4; j++) {
-                glVertex3f(vertext_list[quads_index[i][j]][0],
-                           vertext_list[quads_index[i][j]][1],
-                           vertext_list[quads_index[i][j]][2]);
-            }
-        }
-    }
-    glEnd();
-    glRotatef(-angley_raw, 0.0f, 1.0f, 0.0f);
-    glRotatef(-anglex_raw, 1.0f, 0.0f, 0.0f);
-    glRotatef(-anglez_raw, 0.0f, 0.0f, 1.0f);
-//    glTranslatef(0.0f, -0.1f, 0.0f);
-    glDisable(GL_LINE_STIPPLE);
-     */
-
+    glPopMatrix();
     glFlush();
     glutSwapBuffers();
+
+
+
+
+
+
+
+
+
+
+
+//    int i, j;
+//    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//
+//    GLfloat ambientLight[] = {0.3f, 0.3f, 0.3f, 1.0f};
+//    GLfloat diffuseLight[] = {0.7f, 0.7f, 0.7f, 1.0f};
+//    glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
+//    glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
+//    glEnable(GL_LIGHT0);
+//    GLfloat lightPos[] = {50.f, 50.f, 100.f, 1.f};
+//    glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
+//    glEnable(GL_LIGHTING);
+//
+//    glMatrixMode(GL_PROJECTION);
+//    glLoadIdentity();
+//    gluPerspective(30, 1, 1, 40);
+//    glEnable(GL_DEPTH_TEST);
+//
+////    GLfloat sun_light_position[] = {1.5f, 1.5f, 1.5f, 0.0f};
+////    GLfloat sun_light_ambient[] = {0.0f, 0.0f, 0.0f, 1.0f};
+////    GLfloat sun_light_diffuse[] = {1.0f, 1.0f, 1.0f, 1.0f};
+////    GLfloat sun_light_specular[] = {1.0f, 1.0f, 1.0f, 1.0f};
+////    glLightfv(GL_LIGHT0, GL_POSITION, sun_light_position);
+////    glLightfv(GL_LIGHT0, GL_AMBIENT, sun_light_ambient);
+////    glLightfv(GL_LIGHT0, GL_DIFFUSE, sun_light_diffuse);
+////    glLightfv(GL_LIGHT0, GL_SPECULAR, sun_light_specular);
+////    GLfloat sun_light_position_1[] = {1.5f, 1.5f, 1.5f, 0.0f};
+////    glEnable(GL_LIGHTING);
+////    glEnable(GL_LIGHT0);
+//
+//    glMatrixMode(GL_MODELVIEW);
+//    glLoadIdentity();
+//    gluLookAt(0, 1.5, 3, 0, 0, 0, 0, 1, 0);
+//
+//    GLfloat earth_mat[] = {0.2f, 0.2f, 0.2f, 1.0f};
+//    GLfloat earth_mat_shininess = 128.0f;
+//    glMaterialfv(GL_FRONT, GL_AMBIENT, earth_mat);
+//    glMaterialfv(GL_FRONT, GL_DIFFUSE, earth_mat);
+//    glMaterialfv(GL_FRONT, GL_SPECULAR, earth_mat);
+//    glMaterialf(GL_FRONT, GL_SHININESS, earth_mat_shininess);
+//    glBegin(GL_LINES);
+//    for (i = -100; i < 100; i++) {
+//        glVertex3f(-10.0f, 0.0f, i / 10.0f);
+//        glVertex3f(10.0f, 0.0f, i / 10.0f);
+//    }
+//    for (i = -100; i < 100; i++) {
+//        glVertex3f(i / 10.0f, 0.0f, -10.0f);
+//        glVertex3f(i / 10.0f, 0.0f, 10.0f);
+//    }
+//    glEnd();
+//
+////    glColor3f(1.0f, 1.0f, 0.0f);
+//    glRotatef(rotate_a, rotate_x, rotate_y, rotate_z);
+////    glTranslatef(0.0f, 0.0f, 0.0f);
+//    glBegin(GL_QUADS);
+//    for (i = 0; i < 42; i++) {
+//        if ((i >= 19 && i <= 22) || (i >= 37 && i <= 40)) {
+//            GLfloat earth_mat[] = {0.5f, 0.0f, 0.0f, 1.0f};
+//            GLfloat earth_mat_shininess = 128.0f;
+//            glMaterialfv(GL_FRONT, GL_AMBIENT, earth_mat);
+//            glMaterialfv(GL_FRONT, GL_DIFFUSE, earth_mat);
+//            glMaterialfv(GL_FRONT, GL_SPECULAR, earth_mat);
+//            glMaterialf(GL_FRONT, GL_SHININESS, earth_mat_shininess);
+//        } else if (i < 9) {
+//            GLfloat earth_mat[] = {1.0f, 0.5f, 0.0f, 1.0f};
+//            GLfloat earth_mat_shininess = 128.0f;
+//            glMaterialfv(GL_FRONT, GL_AMBIENT, earth_mat);
+//            glMaterialfv(GL_FRONT, GL_DIFFUSE, earth_mat);
+//            glMaterialfv(GL_FRONT, GL_SPECULAR, earth_mat);
+//            glMaterialf(GL_FRONT, GL_SHININESS, earth_mat_shininess);
+//        } else if (i < 18) {
+//            GLfloat earth_mat[] = {0.25f, 0.125f, 0.0f, 1.0f};
+//            GLfloat earth_mat_shininess = 128.0f;
+//            glMaterialfv(GL_FRONT, GL_AMBIENT, earth_mat);
+//            glMaterialfv(GL_FRONT, GL_DIFFUSE, earth_mat);
+//            glMaterialfv(GL_FRONT, GL_SPECULAR, earth_mat);
+//            glMaterialf(GL_FRONT, GL_SHININESS, earth_mat_shininess);
+//        } else {
+//            GLfloat earth_mat[] = {0.5f, 0.25f, 0.0f, 1.0f};
+//            GLfloat earth_mat_shininess = 128.0f;
+//            glMaterialfv(GL_FRONT, GL_AMBIENT, earth_mat);
+//            glMaterialfv(GL_FRONT, GL_DIFFUSE, earth_mat);
+//            glMaterialfv(GL_FRONT, GL_SPECULAR, earth_mat);
+//            glMaterialf(GL_FRONT, GL_SHININESS, earth_mat_shininess);
+//        }
+//        for (j = 0; j < 4; j++) {
+//            glVertex3f(vertext_list[quads_index[i][j]][0],
+//                       vertext_list[quads_index[i][j]][1],
+//                       vertext_list[quads_index[i][j]][2]);
+//        }
+//    }
+//    glEnd();
+//
+//    // Accel
+//    {
+//        GLfloat earth_mat[] = {0.0f, 0.5f, 0.5f, 1.0f};
+//        GLfloat earth_mat_shininess = 128.0f;
+//        glMaterialfv(GL_FRONT, GL_AMBIENT, earth_mat);
+//        glMaterialfv(GL_FRONT, GL_DIFFUSE, earth_mat);
+//        glMaterialfv(GL_FRONT, GL_SPECULAR, earth_mat);
+//        glMaterialf(GL_FRONT, GL_SHININESS, earth_mat_shininess);
+//    }
+//    glBegin(GL_LINES);
+//    glVertex3f(0,
+//               0,
+//               0);
+//    glVertex3f(accel_x / 2, accel_y / 2, accel_z / 2);
+//    glEnd();
+//    glTranslatef(accel_x / 2, accel_y / 2, accel_z / 2);
+//    glutWireSphere(0.01, 20, 20);
+//    glTranslatef(-accel_x / 2, -accel_y / 2, -accel_z / 2);
+//
+//    float rotate_a_back = rotate_a + 180;
+//    while (rotate_a_back >= 360) rotate_a_back -= 360;
+//    glRotatef(-rotate_a_back, rotate_x, rotate_y, rotate_z);
+//
+//    // Magnet
+//    {
+//        GLfloat earth_mat[] = {0.0f, 1.0f, 0.0f, 1.0f};
+//        GLfloat earth_mat_shininess = 128.0f;
+//        glMaterialfv(GL_FRONT, GL_AMBIENT, earth_mat);
+//        glMaterialfv(GL_FRONT, GL_DIFFUSE, earth_mat);
+//        glMaterialfv(GL_FRONT, GL_SPECULAR, earth_mat);
+//        glMaterialf(GL_FRONT, GL_SHININESS, earth_mat_shininess);
+//    }
+//    glBegin(GL_LINES);
+//    glVertex3f(0,
+//               0,
+//               0);
+//    glVertex3f(magnet_x / 100, magnet_y / 100, magnet_z / 100);
+//    glEnd();
+//    glTranslatef(magnet_x / 100, magnet_y / 100, magnet_z / 100);
+//    glutWireSphere(0.01, 20, 20);
+//    glTranslatef(-magnet_x / 100, -magnet_y / 100, -magnet_z / 100);
+//
+//    /*
+//    glEnable(GL_LINE_STIPPLE);
+//    glLineStipple(2, 0x6666);
+////    glColor3f(1.0f, 1.0f, 0.0f);
+//    double anglex_raw = angle_x;
+//    double angley_raw = angle_y;
+//    double anglez_raw = angle_z;
+//    glRotatef(angley_raw, 0.0f, 1.0f, 0.0f);
+//    glRotatef(anglex_raw, 1.0f, 0.0f, 0.0f);
+//    glRotatef(anglez_raw, 0.0f, 0.0f, 1.0f);
+////    glTranslatef(0.0f, 0.1f, 0.0f);
+//    glBegin(GL_LINES);
+//    int b;
+//    for (i = 0; i < 42; i++) {
+//        GLfloat earth_mat[] = {0.8f, 0.8f, 0.8f, 1.0f};
+//        GLfloat earth_mat_shininess = 128.0f;
+//        glMaterialfv(GL_FRONT, GL_AMBIENT, earth_mat);
+//        glMaterialfv(GL_FRONT, GL_DIFFUSE, earth_mat);
+//        glMaterialfv(GL_FRONT, GL_SPECULAR, earth_mat);
+//        glMaterialf(GL_FRONT, GL_SHININESS, earth_mat_shininess);
+//        for (j = 0; j < 4; j++) {
+//            b = j - 1;
+//            if (b < 0) b = 3;
+//            glVertex3f(vertext_list[quads_index[i][j]][0],
+//                       vertext_list[quads_index[i][j]][1],
+//                       vertext_list[quads_index[i][j]][2]);
+//            glVertex3f(vertext_list[quads_index[i][b]][0],
+//                       vertext_list[quads_index[i][b]][1],
+//                       vertext_list[quads_index[i][b]][2]);
+//        }
+//    }
+//    glEnd();
+//    glBegin(GL_QUADS);
+//    for (i = 0; i < 42; i++) {
+//        if ((i >= 19 && i <= 22) || (i >= 37 && i <= 40)) {
+//            GLfloat earth_mat[] = {0.0f, 0.5f, 0.0f, 1.0f};
+//            GLfloat earth_mat_shininess = 128.0f;
+//            glMaterialfv(GL_FRONT, GL_AMBIENT, earth_mat);
+//            glMaterialfv(GL_FRONT, GL_DIFFUSE, earth_mat);
+//            glMaterialfv(GL_FRONT, GL_SPECULAR, earth_mat);
+//            glMaterialf(GL_FRONT, GL_SHININESS, earth_mat_shininess);
+//            for (j = 0; j < 4; j++) {
+//                glVertex3f(vertext_list[quads_index[i][j]][0],
+//                           vertext_list[quads_index[i][j]][1],
+//                           vertext_list[quads_index[i][j]][2]);
+//            }
+//        }
+//    }
+//    glEnd();
+//    glRotatef(-angley_raw, 0.0f, 1.0f, 0.0f);
+//    glRotatef(-anglex_raw, 1.0f, 0.0f, 0.0f);
+//    glRotatef(-anglez_raw, 0.0f, 0.0f, 1.0f);
+////    glTranslatef(0.0f, -0.1f, 0.0f);
+//    glDisable(GL_LINE_STIPPLE);
+//     */
+//
+//    glFlush();
+//    glutSwapBuffers();
 }
 
-void idle(void)
-{
-    display();
+void init() {
+    glClearColor(1.0,1.0,1.0,0.0);
+    glShadeModel(GL_SMOOTH);
+    glEnable(GL_DEPTH_TEST);
+
+    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);
+
+    GLfloat lightambient[] = {1.0,1.0,1.0,1.0};//环境光
+    GLfloat lightdiffuse[] = {1.0,1.0,1.0,1.0};//漫反射
+    GLfloat lightspecular[] = {1.0,1.0,1.0,1.0 };//镜面反射光
+    GLfloat lightposition[] = {0.0, 0.0, 3.0, 1.0 };//光源位置
+
+    glLightfv(GL_LIGHT0,GL_AMBIENT,lightambient);
+    glLightfv(GL_LIGHT0,GL_DIFFUSE,lightdiffuse);
+    glLightfv(GL_LIGHT0,GL_SPECULAR,lightspecular);
+    glLightfv(GL_LIGHT0, GL_POSITION, lightposition);
+
+    glLightModelf(GL_LIGHT_MODEL_AMBIENT, (0.0, 0.0, 0.0));
+
+    GLfloat emission[] = {0.0, 0.0, 0.0, 1.0};//发射光
+    GLfloat ambient[] ={0.2,0.2,0.2,0.0};//环境光
+    GLfloat diffuse[] ={1.0,0.5,0.5,0.5};//漫反射特性
+    GLfloat specular[] ={0.2,1.0,0.5,0.0 };//镜面反射光色
+    GLfloat shininess[] ={100.0}; //镜面反射的光亮度
+
+    glMaterialfv(GL_FRONT,GL_AMBIENT,ambient);
+    glMaterialfv(GL_FRONT,GL_DIFFUSE,diffuse);
+    glMaterialfv(GL_FRONT,GL_SPECULAR,specular);
+    glMaterialfv(GL_FRONT,GL_SHININESS,shininess);
+    glMaterialfv(GL_FRONT, GL_EMISSION, emission);
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+}
+
+void reshape(int w, int h) {
+    glViewport(0, 0, (GLsizei)w, (GLsizei)h);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluPerspective(30.0, (GLfloat)w/(GLfloat)h, 1.0, 20.0);
+    glMatrixMode(GL_MODELVIEW);
+}
+
+void idle(void) {
+    alpha = alpha + 0.1;
+    if(alpha >= 360) alpha -= 360;
+    glutPostRedisplay();
+}
+
+void mouse(int button, int state, int x, int y) {
+    if(button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
+        alpha = alpha + 45;
+        if(alpha >= 360) alpha -= 360;
+        glutPostRedisplay();
+    }
 }
 
 int main(int argc, char *argv[]) {
     printf("== begin ==\n");
+    tcpclient_init();
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
     glutInitWindowPosition(100, 100);
-    glutInitWindowSize(1000, 1000);
+    glutInitWindowSize(500, 500);
     glutCreateWindow("T'Lab");
-    glutDisplayFunc(&display);
     glutIdleFunc(&idle);
-
-    tcpclient_init();
+    init();
+    glutDisplayFunc(&display);
+    glutReshapeFunc(reshape);
+    glutMouseFunc(mouse);
     glutMainLoop();
     tcpclient_release();
     printf("=== end ===\n");
