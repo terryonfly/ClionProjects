@@ -249,9 +249,9 @@ void display(void) {
     glutWireSphere(0.01, 20, 20);
     glTranslatef(-accel_x / 2, -accel_y / 2, -accel_z / 2);
 
-    rotate_a += 180;
-    while (rotate_a >= 360) rotate_a -= 360;
-    glRotatef(-rotate_a, rotate_x, rotate_y, rotate_z);
+    float rotate_a_back = rotate_a + 180;
+    while (rotate_a_back >= 360) rotate_a_back -= 360;
+    glRotatef(-rotate_a_back, rotate_x, rotate_y, rotate_z);
 
     // Magnet
     {
