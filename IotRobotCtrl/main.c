@@ -17,6 +17,7 @@
 #include <time.h>
 
 #include "tcpclient.h"
+#include "four_axis_aircraft.h"
 
 const static GLfloat vertext_list[][3] = {
         // 0
