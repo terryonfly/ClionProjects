@@ -3,8 +3,10 @@ project(IotRobotCtrl)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-set(SOURCE_FILES main.c platform.h tcpclient.h tcpclient.c)
-add_executable(IotRobotCtrl ${SOURCE_FILES} test.h test.c four_axis_aircraft.h four_axis_aircraft.c)
+set(SOURCE_FILES main.c platform.h tcpclient.h tcpclient.c gl.h four_axis_aircraft.h four_axis_aircraft.c)
+add_executable(IotRobotCtrl ${SOURCE_FILES})
+
+target_link_libraries(IotRobotCtrl m)
 
 IF (WIN32)
     MESSAGE(STATUS "Now is windows")
