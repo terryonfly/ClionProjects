@@ -11,7 +11,8 @@
 
 #include "gl.h"
 #include "tcpclient.h"
-#include "four_axis_aircraft.h"
+#include "four_axis_aircraft_shape.h"
+#include "vector_shape.h"
 
 void display(void) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -48,44 +49,14 @@ void display(void) {
     draw_four_axis_aircraft();
     // Accel
     glPushMatrix();
-    {
-        GLfloat earth_mat[] = {0.0f, 0.5f, 0.5f, 1.0f};
-        GLfloat earth_mat_shininess = 128.0f;
-        glMaterialfv(GL_FRONT, GL_AMBIENT, earth_mat);
-        glMaterialfv(GL_FRONT, GL_DIFFUSE, earth_mat);
-        glMaterialfv(GL_FRONT, GL_SPECULAR, earth_mat);
-        glMaterialf(GL_FRONT, GL_SHININESS, earth_mat_shininess);
-    }
-    glBegin(GL_LINES);
-    glVertex3f(0,
-               0,
-               0);
-    glVertex3f(accel_x / 2, accel_y / 2, accel_z / 2);
-    glEnd();
-    glTranslatef(accel_x / 2, accel_y / 2, accel_z / 2);
-    glutWireSphere(0.01, 20, 20);
+    draw_vector(0.0f, 0.0f, 0.0f, accel_x / 2, accel_y / 2, accel_z / 2);
     glPopMatrix();
 
     glPopMatrix();
 
     // Magnet
     glPushMatrix();
-    {
-        GLfloat earth_mat[] = {0.0f, 1.0f, 0.0f, 1.0f};
-        GLfloat earth_mat_shininess = 128.0f;
-        glMaterialfv(GL_FRONT, GL_AMBIENT, earth_mat);
-        glMaterialfv(GL_FRONT, GL_DIFFUSE, earth_mat);
-        glMaterialfv(GL_FRONT, GL_SPECULAR, earth_mat);
-        glMaterialf(GL_FRONT, GL_SHININESS, earth_mat_shininess);
-    }
-    glBegin(GL_LINES);
-    glVertex3f(0,
-               0,
-               0);
-    glVertex3f(magnet_x / 100, magnet_y / 100, magnet_z / 100);
-    glEnd();
-    glTranslatef(magnet_x / 100, magnet_y / 100, magnet_z / 100);
-    glutWireSphere(0.01, 20, 20);
+    draw_vector(0.0f, 0.0f, 0.0f, magnet_x / 100, magnet_y / 100, magnet_z / 100);
     glPopMatrix();
 
     glFlush();
