@@ -11,7 +11,7 @@
 
 #include "gl.h"
 #include "tcpclient.h"
-#include "four_axis_aircraft_shape.h"
+#include "two_axis_aircraft_shape.h"
 #include "vector_shape.h"
 
 GLfloat look_rad_y = 0;
@@ -36,7 +36,7 @@ void display(void) {
 
     glPushMatrix();
     GLfloat light_position1[] = {-8.f, -8.f, -4.f, 1.0f};
-    GLfloat light_diffuse1[] = {0.5f, 0.5f, 0.5f, 1.0f};
+    GLfloat light_diffuse1[] = {0.3f, 0.3f, 0.3f, 1.0f};
     glLightfv(GL_LIGHT1, GL_POSITION, light_position1);
     glLightfv(GL_LIGHT1, GL_DIFFUSE, light_diffuse1);
     glPopMatrix();
@@ -105,7 +105,7 @@ void display(void) {
 
     glPushMatrix();
     glRotatef(rotate_a, rotate_x, rotate_y, rotate_z);
-    draw_four_axis_aircraft();
+    draw_two_axis_aircraft(30.0, -30.0);
     // Accel
     glPushMatrix();
     draw_vector(0.0f, 0.0f, 0.0f, accel_x / 2, accel_y / 2, accel_z / 2, 0.5f, 1.0f, 0.0f);
@@ -172,6 +172,19 @@ void mouse_move(int x,int y)
     glutPostRedisplay();
 }
 
+void keyboard(unsigned char key, int x, int y)
+{
+    switch(key)
+    {
+        case 'r':
+            glutIdleFunc(idle);
+            break;
+        case 's':
+            glutIdleFunc(NULL);
+            break;
+    }
+}
+
 int main(int argc, char *argv[]) {
     printf("== begin ==\n");
     tcpclient_init();
@@ -186,6 +199,7 @@ int main(int argc, char *argv[]) {
     glutReshapeFunc(reshape);
     glutMouseFunc(mouse);
     glutMotionFunc(mouse_move);
+    glutKeyboardFunc(keyboard);
     glutMainLoop();
     tcpclient_release();
     printf("=== end ===\n");

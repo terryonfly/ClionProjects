@@ -5,7 +5,9 @@
 #include "vector_shape.h"
 #include "gl.h"
 
-void draw_vector(GLfloat sx, GLfloat sy, GLfloat sz, GLfloat ex, GLfloat ey, GLfloat ez, GLfloat r, GLfloat g, GLfloat b) {
+void draw_vector(GLfloat sx, GLfloat sy, GLfloat sz,
+                 GLfloat ex, GLfloat ey, GLfloat ez,
+                 GLfloat r, GLfloat g, GLfloat b) {
     GLfloat earth_mat[] = {r, g, b, 1.0f};
     GLfloat earth_mat_shininess = 128.0f;
     glMaterialfv(GL_FRONT, GL_AMBIENT, earth_mat);
