@@ -25,7 +25,7 @@ void display(void) {
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    gluLookAt(5 * sin(look_rad_y + M_PI / 6), look_pos_y + 1.5, 5 * cos(look_rad_y + M_PI / 6), 0, 0, 0, 0, 1, 0);
+    gluLookAt(1.5 * sin(look_rad_y + M_PI / 6), look_pos_y + 0.4, 1.5 * cos(look_rad_y + M_PI / 6), 0, 0, 0, 0, 1, 0);
 
     glPushMatrix();
     GLfloat light_position0[] = {2.0f, 2.0f, 1.0f, 1.0f};
@@ -105,17 +105,18 @@ void display(void) {
 
     glPushMatrix();
     glRotatef(rotate_a, rotate_x, rotate_y, rotate_z);
-    draw_two_axis_aircraft(30.0, -30.0);
-    // Accel
-    glPushMatrix();
-    draw_vector(0.0f, 0.0f, 0.0f, accel_x / 2, accel_y / 2, accel_z / 2, 0.5f, 1.0f, 0.0f);
-    glPopMatrix();
+    draw_two_axis_aircraft((left_angle - 0.5f) * 110.f, (right_angle - 0.5f) * 110.f, left_power * 20.f, right_power * 20.f);
+    {// Accel
+        glPushMatrix();
+        draw_vector(0.0f, 0.0f, 0.0f, accel_x / 4, accel_y / 4, accel_z / 4, 0.5f, 1.0f, 0.0f);
+        glPopMatrix();
+    }
 
     glPopMatrix();
 
     // Magnet
     glPushMatrix();
-    draw_vector(0.0f, 0.0f, 0.0f, magnet_x / 100, magnet_y / 100, magnet_z / 100, 0.0f, 1.0f, 1.0f);
+    draw_vector(0.0f, 0.0f, 0.0f, magnet_x / 200, magnet_y / 200, magnet_z / 200, 0.0f, 1.0f, 1.0f);
     glPopMatrix();
 
     glFlush();

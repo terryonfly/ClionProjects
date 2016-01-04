@@ -21,5 +21,5 @@ void draw_vector(GLfloat sx, GLfloat sy, GLfloat sz,
     glVertex3f(ex, ey, ez);
     glEnd();
     glTranslatef(ex, ey, ez);
-    glutSolidSphere(0.02, 20, 20);
+    glutSolidSphere(0.005, 10, 10);
 }

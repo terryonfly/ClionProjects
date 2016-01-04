@@ -9,6 +9,7 @@
 
 #include "four_axis_aircraft_shape.h"
 #include "gl.h"
+#include "vector_shape.h"
 
 void set_normal(float p0x, float p0y, float p0z,
                 float p1x, float p1y, float p1z,
@@ -30,8 +31,8 @@ void set_normal(float p0x, float p0y, float p0z,
 }
 
 void draw_jet_engine(float radius, float thickness, float center_offset) {
-    int i, j;
-    int slices = 30;
+    int i;
+    int slices = 100;
     for (i = 0; i < slices; i ++) {
         GLfloat triangle_points[][3] = {
                 // p1-1
@@ -133,6 +134,10 @@ void draw_jet_engine(float radius, float thickness, float center_offset) {
     }
 }
 
+void draw_cylindrical(float radius, float thickness) {
+    draw_jet_engine(radius, thickness, 0.f);
+}
+
 void draw_object(float lx, float ly, float lz) {
     GLfloat quad_points[][3] = {
             -lx / 2.f, ly / 2.f, lz / 2.f,
@@ -173,12 +178,12 @@ void draw_object(float lx, float ly, float lz) {
     }
 }
 
-void draw_servo(float lx, float ly, float lz) {
+void draw_servo(float lx, float ly, float lz, float iny) {
     GLfloat quad_points[][3] = {
-            -lx / 2.f, ly / 2.f, lz / 2.f,
+            -lx / 2.f, ly / 2.f - iny, lz / 2.f,
             lx / 2.f, ly / 2.f, lz / 2.f,
             lx / 2.f, ly / 2.f, -lz / 2.f,
-            -lx / 2.f, ly / 2.f, -lz / 2.f,
+            -lx / 2.f, ly / 2.f - iny, -lz / 2.f,
             -lx / 2.f, -ly / 2.f, lz / 2.f,
             lx / 2.f, -ly / 2.f, lz / 2.f,
             lx / 2.f, -ly / 2.f, -lz / 2.f,
@@ -213,35 +218,149 @@ void draw_servo(float lx, float ly, float lz) {
     }
 }
 
-void draw_two_axis_aircraft(float left_engine_angle, float right_engine_angle) {
-    glPushMatrix();
-    glTranslatef(0.0f, -0.05f, 0.f);
-    draw_object(0.68f, 0.01f, 0.1f);
-    glPopMatrix();
+void draw_two_axis_aircraft(float left_engine_angle, float right_engine_angle,
+                            float left_engine_power, float right_engine_power) {
+    GLfloat earth_mat[] = {1.0f, 0.5f, 0.0f, 1.0f};
+    GLfloat earth_mat_shininess = 128.0f;
+
+    glMaterialfv(GL_FRONT, GL_AMBIENT, earth_mat);
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, earth_mat);
+    glMaterialfv(GL_FRONT, GL_SPECULAR, earth_mat);
+    glMaterialf(GL_FRONT, GL_SHININESS, earth_mat_shininess);
 
     glPushMatrix();
-    glRotatef(0, 0, 1, 0);// Left Servo
-    glTranslatef(0.3f, 0.0f, 0.f);
-    draw_servo(0.06f, 0.08f, 0.04f);
+    glTranslatef(0.0f, -0.026f, 0.f);
+    draw_object(0.165f, 0.01f, 0.065f);
     glPopMatrix();
 
-    glPushMatrix();
-    glRotatef(180, 0, 1, 0);// Right Servo
-    glTranslatef(0.3f, 0.0f, 0.f);
-    draw_servo(0.06f, 0.08f, 0.04f);
+    glPushMatrix();// Left Servo
+    glRotatef(0, 0, 1, 0);
+    glTranslatef(0.063f, 0.007f, 0.0f);
+    draw_servo(0.027f, 0.050f, 0.020f, 0.006f);
+    {
+        glPushMatrix();//
+        glTranslatef(0.028f, -0.007f, 0.000f);
+        glRotatef(left_engine_angle, 1, 0, 0);
+        draw_object(0.013f, 0.025f, 0.100f);
+        {
+            glPushMatrix();
+            glTranslatef(0.053f, 0.f, 0.f);
+            draw_object(0.003f, 0.025f, 0.090f);
+            glPopMatrix();
+            {
+                glPushMatrix();
+                glTranslatef(-0.011f, 0.000f, 0.000f);
+                glRotatef(90, 0, 0, 1);
+                draw_cylindrical(0.010f, 0.010f);
+                glPopMatrix();
+            }
+            {
+                glPushMatrix();
+                glTranslatef(0.029f, 0.006f, 0.041f);
+                glRotatef(90, 0, 0, 1);
+                draw_cylindrical(0.002f, 0.044f);
+                glPopMatrix();
+            }
+            {
+                glPushMatrix();
+                glTranslatef(0.029f, 0.006f, -0.041f);
+                glRotatef(90, 0, 0, 1);
+                draw_cylindrical(0.002f, 0.044f);
+                glPopMatrix();
+            }
+            {
+                glPushMatrix();
+                glTranslatef(0.029f, -0.006f, 0.041f);
+                glRotatef(90, 0, 0, 1);
+                draw_cylindrical(0.002f, 0.044f);
+                glPopMatrix();
+            }
+            {
+                glPushMatrix();
+                glTranslatef(0.029f, -0.006f, -0.041f);
+                glRotatef(90, 0, 0, 1);
+                draw_cylindrical(0.002f, 0.044f);
+                glPopMatrix();
+            }
+        }
+        {
+            glPushMatrix();// Left Jet Engine
+            glTranslatef(0.053f, 0.f, 0.f);
+            draw_jet_engine(0.035f, 0.056f, 0.008f);
+            draw_vector(0.f, 0.f, 0.f,
+                        0.f, left_engine_power / 100.f, 0.f,
+                        1.f, left_engine_power / 100.f, 0.f);
+            glPopMatrix();
+        }
+        glPopMatrix();
+    }
     glPopMatrix();
 
-    glPushMatrix();
-    glRotatef(0, 0, 1, 0);// Left Jet Engine
-    glTranslatef(0.45f, 0.f, 0.f);
-    glRotatef(left_engine_angle, 1, 0, 0);
-    draw_jet_engine(0.1f, 0.2f, 0.02f);
-    glPopMatrix();
+    glMaterialfv(GL_FRONT, GL_AMBIENT, earth_mat);
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, earth_mat);
+    glMaterialfv(GL_FRONT, GL_SPECULAR, earth_mat);
+    glMaterialf(GL_FRONT, GL_SHININESS, earth_mat_shininess);
 
-    glPushMatrix();
-    glRotatef(180, 0, 1, 0);// Right Jet Engine
-    glTranslatef(0.45f, 0.f, 0.f);
-    glRotatef(right_engine_angle, 1, 0, 0);
-    draw_jet_engine(0.1f, 0.2f, 0.02f);
+    glPushMatrix();// Right Servo
+    glRotatef(180, 0, 1, 0);
+    glTranslatef(0.063f, 0.007f, 0.0f);
+    draw_servo(0.027f, 0.050f, 0.020f, 0.006f);
+    {
+        glPushMatrix();//
+        glTranslatef(0.028f, -0.007f, 0.000f);
+        glRotatef(-right_engine_angle, 1, 0, 0);
+        draw_object(0.013f, 0.025f, 0.100f);
+        {
+            glPushMatrix();
+            glTranslatef(0.053f, 0.f, 0.f);
+            draw_object(0.003f, 0.025f, 0.090f);
+            glPopMatrix();
+            {
+                glPushMatrix();
+                glTranslatef(-0.011f, 0.000f, 0.000f);
+                glRotatef(90, 0, 0, 1);
+                draw_cylindrical(0.010f, 0.010f);
+                glPopMatrix();
+            }
+            {
+                glPushMatrix();
+                glTranslatef(0.029f, 0.006f, 0.041f);
+                glRotatef(90, 0, 0, 1);
+                draw_cylindrical(0.002f, 0.044f);
+                glPopMatrix();
+            }
+            {
+                glPushMatrix();
+                glTranslatef(0.029f, 0.006f, -0.041f);
+                glRotatef(90, 0, 0, 1);
+                draw_cylindrical(0.002f, 0.044f);
+                glPopMatrix();
+            }
+            {
+                glPushMatrix();
+                glTranslatef(0.029f, -0.006f, 0.041f);
+                glRotatef(90, 0, 0, 1);
+                draw_cylindrical(0.002f, 0.044f);
+                glPopMatrix();
+            }
+            {
+                glPushMatrix();
+                glTranslatef(0.029f, -0.006f, -0.041f);
+                glRotatef(90, 0, 0, 1);
+                draw_cylindrical(0.002f, 0.044f);
+                glPopMatrix();
+            }
+        }
+        {
+            glPushMatrix();// Right Jet Engine
+            glTranslatef(0.053f, 0.f, 0.f);
+            draw_jet_engine(0.035f, 0.056f, 0.008f);
+            draw_vector(0.f, 0.f, 0.f,
+                        0.f, right_engine_power / 100.f, 0.f,
+                        1.f, right_engine_power / 100.f, 0.f);
+            glPopMatrix();
+        }
+        glPopMatrix();
+    }
     glPopMatrix();
 }

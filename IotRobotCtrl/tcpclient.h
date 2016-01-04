@@ -18,6 +18,11 @@ extern float magnet_x;
 extern float magnet_y;
 extern float magnet_z;
 
+extern float left_angle;
+extern float right_angle;
+extern float left_power;
+extern float right_power;
+
 int tcpclient_init(void);
 
 void tcpclient_release(void);

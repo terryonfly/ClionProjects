@@ -48,6 +48,11 @@ float magnet_x = 0.0;
 float magnet_y = 0.0;
 float magnet_z = 1.0;
 
+float left_angle = 0.0;
+float right_angle = 0.0;
+float left_power = 0.0;
+float right_power = 0.0;
+
 int tcpclient_init(void) {
     int ret;
     thread_running = 1;
@@ -210,6 +215,26 @@ void tcpclient_content_decode(unsigned char *buf, size_t len)
     }
 
     pf = &magnet_z;
+    for(i = 0; i < 4; i ++) {
+        *((unsigned char*)pf+i) = *(px++);
+    }
+
+    pf = &left_angle;
+    for(i = 0; i < 4; i ++) {
+        *((unsigned char*)pf+i) = *(px++);
+    }
+
+    pf = &right_angle;
+    for(i = 0; i < 4; i ++) {
+        *((unsigned char*)pf+i) = *(px++);
+    }
+
+    pf = &left_power;
+    for(i = 0; i < 4; i ++) {
+        *((unsigned char*)pf+i) = *(px++);
+    }
+
+    pf = &right_power;
     for(i = 0; i < 4; i ++) {
         *((unsigned char*)pf+i) = *(px++);
     }
