@@ -105,7 +105,7 @@ void display(void) {
 
     glPushMatrix();
     glRotatef(rotate_a, rotate_x, rotate_y, rotate_z);
-    draw_two_axis_aircraft((left_angle - 0.5f) * 110.f, (right_angle - 0.5f) * 110.f, left_power * 20.f, right_power * 20.f);
+    draw_two_axis_aircraft(left_angle * 55.f, right_angle * 55.f, left_power * 20.f, right_power * 20.f);
     {// Accel
         glPushMatrix();
         draw_vector(0.0f, 0.0f, 0.0f, accel_x / 4, accel_y / 4, accel_z / 4, 0.5f, 1.0f, 0.0f);
