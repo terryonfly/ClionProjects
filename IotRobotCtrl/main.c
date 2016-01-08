@@ -19,6 +19,11 @@ GLfloat look_pos_y = 0;
 int mouse_move_x = 0;
 int mouse_move_y = 0;
 
+int auto_look = 1;
+
+float ctrl_val_1 = 0.0;
+float ctrl_val_2 = 0.0;
+
 void display(void) {
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -144,11 +149,13 @@ void reshape(int w, int h) {
 }
 
 void idle(void) {
-    if (mouse_move_x == 0 && look_rad_y != 0.0) {
-        look_rad_y -= look_rad_y / 50;
-    }
-    if (mouse_move_y == 0 && look_pos_y != 0.0) {
-        look_pos_y -= look_pos_y / 50;
+    if (auto_look) {
+        if (mouse_move_x == 0 && look_rad_y != 0.0) {
+            look_rad_y -= look_rad_y / 50;
+        }
+        if (mouse_move_y == 0 && look_pos_y != 0.0) {
+            look_pos_y -= look_pos_y / 50;
+        }
     }
     glutPostRedisplay();
 }
@@ -173,15 +180,52 @@ void mouse_move(int x,int y)
     glutPostRedisplay();
 }
 
+void sync_ctrl_msg() {
+    unsigned char msg[8];
+    int c_i = 0;
+    unsigned char *pdata;
+    int i;
+
+    printf("ctrl : ");
+    {/* Ctrl */
+        printf("%.6f ", ctrl_val_1);
+        pdata = ((unsigned char *) &ctrl_val_1);
+        for (i = 0; i < 4; i++) {
+            msg[c_i++] = *pdata++;
+        }
+        printf("%.6f ", ctrl_val_2);
+        pdata = ((unsigned char *) &ctrl_val_2);
+        for (i = 0; i < 4; i++) {
+            msg[c_i++] = *pdata++;
+        }
+    }
+    printf("\n");
+
+    tcpclient_send(msg, 8);
+}
+
 void keyboard(unsigned char key, int x, int y)
 {
     switch(key)
     {
         case 'r':
-            glutIdleFunc(idle);
+            auto_look = !auto_look;
             break;
-        case 's':
-            glutIdleFunc(NULL);
+        case 't':// left up
+            ctrl_val_1 += 0.001;
+            sync_ctrl_msg();
+            break;
+        case 'g':// left down
+            ctrl_val_1 -= 0.001;
+            sync_ctrl_msg();
+            break;
+        case 'y':// right up
+            ctrl_val_2 += 0.001;
+            sync_ctrl_msg();
+            break;
+        case 'h':// right down
+            ctrl_val_2 -= 0.001;
+            sync_ctrl_msg();
             break;
     }
 }
