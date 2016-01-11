@@ -11,8 +11,8 @@
 
 #include "gl.h"
 #include "tcpclient.h"
-#include "two_axis_aircraft_shape.h"
-#include "vector_shape.h"
+#include "shapes/two_axis_aircraft_shape.h"
+#include "shapes/vector_shape.h"
 
 GLfloat look_rad_y = 0;
 GLfloat look_pos_y = 0;

@@ -82,7 +82,7 @@ void tcpclient_run(void) {
             return;
         }
 
-        if ((sock_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+        if ((sock_fd = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, 0)) == -1) {
             perror("socket() error ");
             return;
         }
@@ -129,9 +129,6 @@ void tcpclient_data_decode(unsigned char *buf, size_t len) {
                     break;
                 case CMD_DATA_FOOTER:
                     // buf[i] is footer data
-//                    for (k = 0; k < rev_content_index; k ++)
-//                        printf("%02x ", rev_content[k]);
-//                    printf("\n");
                     tcpclient_content_decode(rev_content, rev_content_index);
 
                     rev_content_index = 0;
@@ -144,24 +141,6 @@ void tcpclient_data_decode(unsigned char *buf, size_t len) {
         }
     }
 }
-
-/*
-unsigned char buf[4];
-float src = 0.123456f;
-unsigned char *pdata = ((unsigned char *)&src);
-for (int i = 0; i < 4; i ++) {
-buf[i] = *pdata++;
-}
-
-float dst;
-void *pf;
-pf = &dst;
-unsigned char* px = buf;
-for(unsigned char i = 0; i < 4; i ++) {
-*((unsigned char*)pf+i) = *(px++);
-}
-printf("%f\n", dst);
- */
 
 void tcpclient_content_decode(unsigned char *buf, size_t len)
 {
