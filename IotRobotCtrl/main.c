@@ -21,8 +21,10 @@ int mouse_move_y = 0;
 
 int auto_look = 1;
 
-float ctrl_val_1 = 0.0;
-float ctrl_val_2 = 0.0;
+float ctrl_x = 0.0;
+float ctrl_y = 0.0;
+float ctrl_z = 0.0;
+float ctrl_w = 0.0;
 
 void display(void) {
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
@@ -110,7 +112,7 @@ void display(void) {
 
     glPushMatrix();
     glRotatef(rotate_a, rotate_x, rotate_y, rotate_z);
-    draw_two_axis_aircraft(left_angle * 55.f, right_angle * 55.f, left_power * 20.f, right_power * 20.f);
+    draw_two_axis_aircraft(left_angle, right_angle, left_power, right_power);
     {// Accel
         glPushMatrix();
         draw_vector(0.0f, 0.0f, 0.0f, accel_x / 4, accel_y / 4, accel_z / 4, 0.5f, 1.0f, 0.0f);
@@ -181,27 +183,37 @@ void mouse_move(int x,int y)
 }
 
 void sync_ctrl_msg() {
-    unsigned char msg[8];
+    unsigned char msg[16];
     int c_i = 0;
     unsigned char *pdata;
     int i;
 
     printf("ctrl : ");
     {/* Ctrl */
-        printf("%.6f ", ctrl_val_1);
-        pdata = ((unsigned char *) &ctrl_val_1);
+        printf("%6.3f ", ctrl_x);
+        pdata = ((unsigned char *) &ctrl_x);
         for (i = 0; i < 4; i++) {
             msg[c_i++] = *pdata++;
         }
-        printf("%.6f ", ctrl_val_2);
-        pdata = ((unsigned char *) &ctrl_val_2);
+        printf("%6.3f ", ctrl_y);
+        pdata = ((unsigned char *) &ctrl_y);
+        for (i = 0; i < 4; i++) {
+            msg[c_i++] = *pdata++;
+        }
+        printf("%6.3f ", ctrl_z);
+        pdata = ((unsigned char *) &ctrl_z);
+        for (i = 0; i < 4; i++) {
+            msg[c_i++] = *pdata++;
+        }
+        printf("%6.3f ", ctrl_w);
+        pdata = ((unsigned char *) &ctrl_w);
         for (i = 0; i < 4; i++) {
             msg[c_i++] = *pdata++;
         }
     }
     printf("\n");
 
-    tcpclient_send(msg, 8);
+    tcpclient_send(msg, 16);
 }
 
 void keyboard(unsigned char key, int x, int y)
@@ -212,19 +224,19 @@ void keyboard(unsigned char key, int x, int y)
             auto_look = !auto_look;
             break;
         case 't':// left up
-            ctrl_val_1 += 0.001;
+            ctrl_x += 0.001;
             sync_ctrl_msg();
             break;
         case 'g':// left down
-            ctrl_val_1 -= 0.001;
+            ctrl_x -= 0.001;
             sync_ctrl_msg();
             break;
         case 'y':// right up
-            ctrl_val_2 += 0.001;
+            ctrl_y += 0.001;
             sync_ctrl_msg();
             break;
         case 'h':// right down
-            ctrl_val_2 -= 0.001;
+            ctrl_y -= 0.001;
             sync_ctrl_msg();
             break;
     }
@@ -236,7 +248,7 @@ int main(int argc, char *argv[]) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
     glutInitWindowPosition(0, 0);
-    glutInitWindowSize(1024, 1024);
+    glutInitWindowSize(768, 768);
     glutCreateWindow("T'Lab");
     init();
     glutIdleFunc(idle);
