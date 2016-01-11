@@ -3,7 +3,7 @@
 //
 
 #include "vector_shape.h"
-#include "gl.h"
+#include "../gl.h"
 
 void draw_vector(GLfloat sx, GLfloat sy, GLfloat sz,
                  GLfloat ex, GLfloat ey, GLfloat ez,

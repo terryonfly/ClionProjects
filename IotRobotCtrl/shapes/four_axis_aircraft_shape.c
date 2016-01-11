@@ -8,7 +8,7 @@
 #include <math.h>
 
 #include "four_axis_aircraft_shape.h"
-#include "gl.h"
+#include "../gl.h"
 
 const static GLfloat vertext_list[][3] = {
         // 0

@@ -8,7 +8,7 @@
 #include <math.h>
 
 #include "four_axis_aircraft_shape.h"
-#include "gl.h"
+#include "../gl.h"
 #include "vector_shape.h"
 
 void set_normal(float p0x, float p0y, float p0z,
