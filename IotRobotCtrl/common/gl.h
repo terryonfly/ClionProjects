@@ -7,7 +7,7 @@
 
 #include "platform.h"
 #ifdef APPLE
-#include <GLUT/GLUT.h>
+#include "glut.h"
 #else
 #include <GL/glut.h>
 #endif

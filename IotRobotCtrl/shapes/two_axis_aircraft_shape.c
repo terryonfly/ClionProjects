@@ -8,7 +8,7 @@
 #include <math.h>
 
 #include "four_axis_aircraft_shape.h"
-#include "../gl.h"
+#include "../common/gl.h"
 #include "vector_shape.h"
 
 void set_normal(float p0x, float p0y, float p0z,
@@ -220,13 +220,7 @@ void draw_servo(float lx, float ly, float lz, float iny) {
 
 void draw_two_axis_aircraft(float left_engine_angle, float right_engine_angle,
                             float left_engine_power, float right_engine_power) {
-    GLfloat earth_mat[] = {1.0f, 0.5f, 0.0f, 1.0f};
-    GLfloat earth_mat_shininess = 128.0f;
-
-    glMaterialfv(GL_FRONT, GL_AMBIENT, earth_mat);
-    glMaterialfv(GL_FRONT, GL_DIFFUSE, earth_mat);
-    glMaterialfv(GL_FRONT, GL_SPECULAR, earth_mat);
-    glMaterialf(GL_FRONT, GL_SHININESS, earth_mat_shininess);
+    glColor3f(1.0f, 0.5f, 0.0f);// 1.0f
 
     glPushMatrix();
     glTranslatef(0.0f, -0.026f, 0.f);
@@ -296,10 +290,7 @@ void draw_two_axis_aircraft(float left_engine_angle, float right_engine_angle,
     }
     glPopMatrix();
 
-    glMaterialfv(GL_FRONT, GL_AMBIENT, earth_mat);
-    glMaterialfv(GL_FRONT, GL_DIFFUSE, earth_mat);
-    glMaterialfv(GL_FRONT, GL_SPECULAR, earth_mat);
-    glMaterialf(GL_FRONT, GL_SHININESS, earth_mat_shininess);
+    glColor3f(1.0f, 0.5f, 0.0f);// 1.0f
 
     glPushMatrix();// Right Servo
     glRotatef(180, 0, 1, 0);

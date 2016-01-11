@@ -3,17 +3,12 @@
 //
 
 #include "vector_shape.h"
-#include "../gl.h"
+#include "../common/gl.h"
 
 void draw_vector(GLfloat sx, GLfloat sy, GLfloat sz,
                  GLfloat ex, GLfloat ey, GLfloat ez,
                  GLfloat r, GLfloat g, GLfloat b) {
-    GLfloat earth_mat[] = {r, g, b, 1.0f};
-    GLfloat earth_mat_shininess = 128.0f;
-    glMaterialfv(GL_FRONT, GL_AMBIENT, earth_mat);
-    glMaterialfv(GL_FRONT, GL_DIFFUSE, earth_mat);
-    glMaterialfv(GL_FRONT, GL_SPECULAR, earth_mat);
-    glMaterialf(GL_FRONT, GL_SHININESS, earth_mat_shininess);
+    glColor3f(r, g, b);// 1.0f
 
     glBegin(GL_LINES);
     glNormal3f(1, 0, 0);

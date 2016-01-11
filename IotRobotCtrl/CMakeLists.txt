@@ -3,7 +3,7 @@ project(IotRobotCtrl)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-set(SOURCE_FILES main.c platform.h tcpclient.h tcpclient.c gl.h shapes/two_axis_aircraft_shape.h shapes/two_axis_aircraft_shape.c shapes/four_axis_aircraft_shape.h shapes/four_axis_aircraft_shape.c shapes/vector_shape.h shapes/vector_shape.c)
+set(SOURCE_FILES main.c common/platform.h tcpclient.h tcpclient.c common/gl.h shapes/two_axis_aircraft_shape.h shapes/two_axis_aircraft_shape.c shapes/four_axis_aircraft_shape.h shapes/four_axis_aircraft_shape.c shapes/vector_shape.h shapes/vector_shape.c shapes/plot_2d_shape.h shapes/plot_2d_shape.c)
 add_executable(IotRobotCtrl ${SOURCE_FILES})
 
 target_link_libraries(IotRobotCtrl m)

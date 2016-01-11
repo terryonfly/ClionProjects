@@ -9,10 +9,11 @@
 #include <math.h>
 #include <time.h>
 
-#include "gl.h"
+#include "common/gl.h"
 #include "tcpclient.h"
 #include "shapes/two_axis_aircraft_shape.h"
 #include "shapes/vector_shape.h"
+#include "shapes/plot_2d_shape.h"
 
 GLfloat look_rad_y = 0;
 GLfloat look_pos_y = 0;
@@ -21,18 +22,54 @@ int mouse_move_y = 0;
 
 int auto_look = 1;
 
+GLfloat window_w = 1000.f;
+GLfloat window_h = 600.f;
+
 float ctrl_x = 0.0;
 float ctrl_y = 0.0;
 float ctrl_z = 0.0;
 float ctrl_w = 0.0;
 
+float plot_w = 300;
+float plot_h = 200;
+
 void display(void) {
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    // 2D
+    glMatrixMode( GL_PROJECTION);
+    glLoadIdentity();
+    gluOrtho2D( 0.0, window_w, 0.0, window_h);
+
+    glMatrixMode( GL_MODELVIEW );
+    glLoadIdentity();
+
+    glPushMatrix();
+    glColor3f(0.01f, 0.01f, 0.01f);
+    glBegin(GL_QUADS);
+    glVertex2f(0.f, 0.f);
+    glVertex2f(0.f, plot_h);
+    glVertex2f(plot_w, plot_h);
+    glVertex2f(plot_w, 0.f);
+    glEnd();
+    glPopMatrix();
+
+    draw_plot_2d(status_x_array, MAX_PLOT_LEN, status_x_current_index, plot_w, plot_h);
+
+    // 3D
+    glEnable(GL_LIGHTING);
+
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluPerspective(30.0, window_w / window_h, 1.0, 20.0);
+
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     gluLookAt(1.5 * sin(look_rad_y + M_PI / 6), look_pos_y + 0.4, 1.5 * cos(look_rad_y + M_PI / 6), 0, 0, 0, 0, 1, 0);
+
+    glEnable(GL_COLOR_MATERIAL);
+    glColorMaterial(GL_FRONT, GL_DIFFUSE);
 
     glPushMatrix();
     GLfloat light_position0[] = {2.0f, 2.0f, 1.0f, 1.0f};
@@ -52,12 +89,7 @@ void display(void) {
     int i;
     {
         glNormal3f(0, 1, 0);
-        GLfloat earth_mat[] = {0.15f, 0.3f, 0.5f, 0.5f};
-        GLfloat earth_mat_shininess = 128.0f;
-        glMaterialfv(GL_FRONT, GL_AMBIENT, earth_mat);
-        glMaterialfv(GL_FRONT, GL_DIFFUSE, earth_mat);
-        glMaterialfv(GL_FRONT, GL_SPECULAR, earth_mat);
-        glMaterialf(GL_FRONT, GL_SHININESS, earth_mat_shininess);
+        glColor3f(0.15f, 0.3f, 0.5f);// 0.5f
         glBegin(GL_LINES);
         // Bottom
         for (i = -10; i < 10; i++) {
@@ -71,12 +103,7 @@ void display(void) {
     }
     {
         glNormal3f(1, 0, 0);
-        GLfloat earth_mat[] = {0.05f, 0.35f, 0.05f, 0.5f};
-        GLfloat earth_mat_shininess = 128.0f;
-        glMaterialfv(GL_FRONT, GL_AMBIENT, earth_mat);
-        glMaterialfv(GL_FRONT, GL_DIFFUSE, earth_mat);
-        glMaterialfv(GL_FRONT, GL_SPECULAR, earth_mat);
-        glMaterialf(GL_FRONT, GL_SHININESS, earth_mat_shininess);
+        glColor3f(0.05f, 0.35f, 0.05f);// 0.5f
         glBegin(GL_LINES);
         // Left
         for (i = -10; i < 10; i++) {
@@ -90,12 +117,7 @@ void display(void) {
     }
     {
         glNormal3f(0, 0, 1);
-        GLfloat earth_mat[] = {0.5f, 0.3f, 0.05f, 0.5f};
-        GLfloat earth_mat_shininess = 128.0f;
-        glMaterialfv(GL_FRONT, GL_AMBIENT, earth_mat);
-        glMaterialfv(GL_FRONT, GL_DIFFUSE, earth_mat);
-        glMaterialfv(GL_FRONT, GL_SPECULAR, earth_mat);
-        glMaterialf(GL_FRONT, GL_SHININESS, earth_mat_shininess);
+        glColor3f(0.5f, 0.3f, 0.05f);// 0.5f
         glBegin(GL_LINES);
         // Front
         for (i = -10; i < 10; i++) {
@@ -126,6 +148,9 @@ void display(void) {
     draw_vector(0.0f, 0.0f, 0.0f, magnet_x / 200, magnet_y / 200, magnet_z / 200, 0.0f, 1.0f, 1.0f);
     glPopMatrix();
 
+    glDisable(GL_COLOR_MATERIAL);
+    glDisable(GL_LIGHTING);
+
     glFlush();
     glutSwapBuffers();
 }
@@ -136,8 +161,8 @@ void init() {
     glClearDepth(1.0);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
-    glHint(GL_PERSPECTIVE_CORRECTION_HINT,GL_NICEST);
-    glEnable(GL_LIGHTING);
+    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+//    glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
     glEnable(GL_LIGHT1);
 }
@@ -145,9 +170,8 @@ void init() {
 void reshape(int w, int h) {
     glViewport(0, 0, (GLsizei)w, (GLsizei)h);
 
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluPerspective(30.0, (GLfloat)w/(GLfloat)h, 1.0, 20.0);
+    window_w = (GLfloat)w;
+    window_h = (GLfloat)h;
 }
 
 void idle(void) {
@@ -248,7 +272,7 @@ int main(int argc, char *argv[]) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
     glutInitWindowPosition(0, 0);
-    glutInitWindowSize(768, 768);
+    glutInitWindowSize(window_w, window_h);
     glutCreateWindow("T'Lab");
     init();
     glutIdleFunc(idle);

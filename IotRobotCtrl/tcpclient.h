@@ -23,6 +23,17 @@ extern float right_angle;
 extern float left_power;
 extern float right_power;
 
+#define MAX_PLOT_LEN 300
+
+extern float status_x_array[MAX_PLOT_LEN];
+extern int status_x_current_index;
+extern float status_y_array[MAX_PLOT_LEN];
+extern int status_y_current_index;
+extern float status_z_array[MAX_PLOT_LEN];
+extern int status_z_current_index;
+extern float status_w_array[MAX_PLOT_LEN];
+extern int status_w_current_index;
+
 int tcpclient_init(void);
 
 void tcpclient_release(void);
@@ -32,6 +43,8 @@ void tcpclient_run(void);
 void tcpclient_data_decode(unsigned char *buf, size_t len);
 
 void tcpclient_content_decode(unsigned char *buf, size_t len);
+
+void content_data_updated();
 
 int tcpclient_send(unsigned char *buf, size_t len);
 
