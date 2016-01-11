@@ -11,6 +11,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <sys/fcntl.h>
 #include <netdb.h> /* netdb is necessary for struct hostent */
 #include <pthread.h>
 
@@ -82,10 +83,11 @@ void tcpclient_run(void) {
             return;
         }
 
-        if ((sock_fd = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, 0)) == -1) {
+        if ((sock_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
             perror("socket() error ");
             return;
         }
+        fcntl( sock_fd, F_SETFL, O_NONBLOCK );
         bzero(&server, sizeof(server));
         server.sin_family = AF_INET;
         server.sin_port = htons(PORT);
