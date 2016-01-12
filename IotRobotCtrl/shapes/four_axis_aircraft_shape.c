@@ -8,7 +8,7 @@
 #include <math.h>
 
 #include "four_axis_aircraft_shape.h"
-#include "gl.h"
+#include "../common/gl.h"
 
 const static GLfloat vertext_list[][3] = {
         // 0
@@ -126,12 +126,7 @@ void draw_four_axis_aircraft() {
     for (i = 0; i < 42; i++) {
         glBegin(GL_QUADS);
         if ((i >= 19 && i <= 22) || (i >= 37 && i <= 40)) {
-            GLfloat earth_mat[] = {1.0f, 0.0f, 0.0f, 1.0f};
-            GLfloat earth_mat_shininess = 128.0f;
-            glMaterialfv(GL_FRONT, GL_AMBIENT, earth_mat);
-            glMaterialfv(GL_FRONT, GL_DIFFUSE, earth_mat);
-            glMaterialfv(GL_FRONT, GL_SPECULAR, earth_mat);
-            glMaterialf(GL_FRONT, GL_SHININESS, earth_mat_shininess);
+            glColor3f(1.0f, 0.0f, 0.0f);// 1.0f
             float x2 = vertext_list[quads_index[i][0]][0] - vertext_list[quads_index[i][1]][0];
             float y2 = vertext_list[quads_index[i][0]][1] - vertext_list[quads_index[i][1]][1];
             float z2 = vertext_list[quads_index[i][0]][2] - vertext_list[quads_index[i][1]][2];
@@ -147,12 +142,7 @@ void draw_four_axis_aircraft() {
             z /= norn;
             glNormal3f(x, y, z);
         } else if (i < 9) {
-            GLfloat earth_mat[] = {1.0f, 0.5f, 0.0f, 1.0f};
-            GLfloat earth_mat_shininess = 128.0f;
-            glMaterialfv(GL_FRONT, GL_AMBIENT, earth_mat);
-            glMaterialfv(GL_FRONT, GL_DIFFUSE, earth_mat);
-            glMaterialfv(GL_FRONT, GL_SPECULAR, earth_mat);
-            glMaterialf(GL_FRONT, GL_SHININESS, earth_mat_shininess);
+            glColor3f(1.0f, 0.5f, 0.0f);// 1.0f
             float x2 = vertext_list[quads_index[i][0]][0] - vertext_list[quads_index[i][1]][0];
             float y2 = vertext_list[quads_index[i][0]][1] - vertext_list[quads_index[i][1]][1];
             float z2 = vertext_list[quads_index[i][0]][2] - vertext_list[quads_index[i][1]][2];
@@ -168,13 +158,7 @@ void draw_four_axis_aircraft() {
             z /= norn;
             glNormal3f(x, y, z);
         } else if (i < 18) {
-            GLfloat earth_mat[] = {0.0f, 0.2f, 0.0f, 1.0f};
-//            GLfloat earth_mat[] = {0.25f, 0.125f, 0.0f, 1.0f};
-            GLfloat earth_mat_shininess = 128.0f;
-            glMaterialfv(GL_FRONT, GL_AMBIENT, earth_mat);
-            glMaterialfv(GL_FRONT, GL_DIFFUSE, earth_mat);
-            glMaterialfv(GL_FRONT, GL_SPECULAR, earth_mat);
-            glMaterialf(GL_FRONT, GL_SHININESS, earth_mat_shininess);
+            glColor3f(0.0f, 0.2f, 0.0f);// 1.0f
             float x1 = vertext_list[quads_index[i][0]][0] - vertext_list[quads_index[i][1]][0];
             float y1 = vertext_list[quads_index[i][0]][1] - vertext_list[quads_index[i][1]][1];
             float z1 = vertext_list[quads_index[i][0]][2] - vertext_list[quads_index[i][1]][2];
@@ -190,13 +174,7 @@ void draw_four_axis_aircraft() {
             z /= norn;
             glNormal3f(x, y, z);
         } else {
-            GLfloat earth_mat[] = {0.8f, 0.4f, 0.0f, 1.0f};
-//            GLfloat earth_mat[] = {0.5f, 0.25f, 0.0f, 1.0f};
-            GLfloat earth_mat_shininess = 128.0f;
-            glMaterialfv(GL_FRONT, GL_AMBIENT, earth_mat);
-            glMaterialfv(GL_FRONT, GL_DIFFUSE, earth_mat);
-            glMaterialfv(GL_FRONT, GL_SPECULAR, earth_mat);
-            glMaterialf(GL_FRONT, GL_SHININESS, earth_mat_shininess);
+            glColor3f(0.8f, 0.4f, 0.0f);// 1.0f
             float x2 = vertext_list[quads_index[i][0]][0] - vertext_list[quads_index[i][1]][0];
             float y2 = vertext_list[quads_index[i][0]][1] - vertext_list[quads_index[i][1]][1];
             float z2 = vertext_list[quads_index[i][0]][2] - vertext_list[quads_index[i][1]][2];
@@ -227,12 +205,7 @@ void draw_four_axis_aircraft_stipple() {
     glLineStipple(2, 0x6666);
     glBegin(GL_LINES);
     for (i = 0; i < 42; i++) {
-        GLfloat earth_mat[] = {0.8f, 0.8f, 0.8f, 1.0f};
-        GLfloat earth_mat_shininess = 128.0f;
-        glMaterialfv(GL_FRONT, GL_AMBIENT, earth_mat);
-        glMaterialfv(GL_FRONT, GL_DIFFUSE, earth_mat);
-        glMaterialfv(GL_FRONT, GL_SPECULAR, earth_mat);
-        glMaterialf(GL_FRONT, GL_SHININESS, earth_mat_shininess);
+        glColor3f(0.8f, 0.8f, 0.8f);// 1.0f
         for (j = 0; j < 4; j++) {
             b = j - 1;
             if (b < 0) b = 3;
@@ -248,12 +221,7 @@ void draw_four_axis_aircraft_stipple() {
     glBegin(GL_QUADS);
     for (i = 0; i < 42; i++) {
         if ((i >= 19 && i <= 22) || (i >= 37 && i <= 40)) {
-            GLfloat earth_mat[] = {0.0f, 0.5f, 0.0f, 1.0f};
-            GLfloat earth_mat_shininess = 128.0f;
-            glMaterialfv(GL_FRONT, GL_AMBIENT, earth_mat);
-            glMaterialfv(GL_FRONT, GL_DIFFUSE, earth_mat);
-            glMaterialfv(GL_FRONT, GL_SPECULAR, earth_mat);
-            glMaterialf(GL_FRONT, GL_SHININESS, earth_mat_shininess);
+            glColor3f(0.0f, 0.5f, 0.0f);// 1.0f
             for (j = 0; j < 4; j++) {
                 glVertex3f(vertext_list[quads_index[i][j]][0],
                            vertext_list[quads_index[i][j]][1],

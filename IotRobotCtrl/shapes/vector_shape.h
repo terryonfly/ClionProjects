@@ -5,7 +5,7 @@
 #ifndef IOTROBOTCTRL_VECTOR_SHAPE_H
 #define IOTROBOTCTRL_VECTOR_SHAPE_H
 
-#include "gl.h"
+#include "../common/gl.h"
 
 void draw_vector(GLfloat sx, GLfloat sy, GLfloat sz,
                  GLfloat ex, GLfloat ey, GLfloat ez,
