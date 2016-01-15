@@ -94,7 +94,7 @@ void tcpserver_run(void) {
 
         struct timeval tv;
         gettimeofday(&tv, NULL);
-        printf("You got a connection from client's ip %s, port %d at time %ld.%d\n", inet_ntoa(client.sin_addr), htons(client.sin_port), tv.tv_sec, tv.tv_usec);
+        printf("You got a connection from client's ip %s, port %d at time %d.%d\n", inet_ntoa(client.sin_addr), htons(client.sin_port), tv.tv_sec, tv.tv_usec);
 
         int read_len;
         while(thread_running)
@@ -117,7 +117,7 @@ void tcpserver_data_decode(unsigned char *buf, size_t len) {
     int i;
     for (i = 0; i < len; i ++) {
 		if (buf[i] == '\n') {
-			rev_content[rev_content_index] = "\0";
+			rev_content[rev_content_index] = '\0';
 			rev_content_index ++;
 			if (rev_content_index > MAX_REV_CONTENT_LEN) rev_content_index = 0;
 			tcpserver_content_decode(rev_content);
