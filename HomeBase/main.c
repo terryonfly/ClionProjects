@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <string.h>
 #include <signal.h>
 #include <math.h>
 
@@ -19,6 +20,8 @@ int main() {
     signal(SIGTERM, cs);  //kill
     tcpserver_init();
     while (running) {
+        unsigned char *msg = "abcdefg";
+        tcpserver_send(msg, strlen(msg));
         sleep(1);
     }
     tcpserver_release();

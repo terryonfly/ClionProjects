@@ -100,7 +100,7 @@ void tcpserver_run(void) {
         gettimeofday(&tv, NULL);
         printf("You got a connection from client's ip %s, port %d at time %ld.%d\n", inet_ntoa(client.sin_addr), htons(client.sin_port), tv.tv_sec, tv.tv_usec);
 
-        int read_len = -1;
+        int read_len;
         while(thread_running)
         {
         	read_len = recv(connectfd, buf, MAXRECVLEN, 0);
@@ -112,8 +112,9 @@ void tcpserver_run(void) {
                 break;
             }
         }
+		printf("connection did closed.\n");
     }
-    close(listenfd); /* close listenfd */
+    close(listenfd);
 }
 
 void tcpserver_data_decode(unsigned char *buf, size_t len) {
