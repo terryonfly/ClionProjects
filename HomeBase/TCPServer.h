@@ -16,8 +16,8 @@ void tcpserver_run(void);
 
 void tcpserver_data_decode(unsigned char *buf, size_t len);
 
-void tcpserver_content_decode(unsigned char *buf, size_t len);
+void tcpserver_content_decode(unsigned char *buf);
 
-int tcpserver_send(unsigned char *buf, size_t len);
+int tcpserver_send(unsigned char *buf);
 
 #endif /* TCPSERVER_H_ */

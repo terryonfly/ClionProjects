@@ -9,19 +9,23 @@
 
 int running = 1;
 
+int auto_update = 1;
+
 void cs(int n) {
-    printf("now dowm!\n");
+    printf("now dowm = %d\n", n);
     running = 0;
 }
 
 int main() {
     printf("=== robot start ===\n");
-    signal(SIGINT, cs);  //ctrl+c
-    signal(SIGTERM, cs);  //kill
+    signal(SIGINT, cs);// ctrl+c
+    signal(SIGTERM, cs);// kill
     tcpserver_init();
     while (running) {
-        unsigned char *msg = "abcdefg";
-        tcpserver_send(msg, strlen(msg));
+        if (auto_update) {
+            unsigned char *msg = "abcdefg";
+            tcpserver_send(msg);
+        }
         sleep(1);
     }
     tcpserver_release();

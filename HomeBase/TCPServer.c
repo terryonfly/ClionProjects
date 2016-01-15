@@ -14,8 +14,10 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <pthread.h>
+#include <string.h>
 
 #include "TCPServer.h"
+#include "cJSON.h"
 
 #define PORT 8888
 
@@ -27,17 +29,11 @@ int connectfd = -1;
 pthread_t thread_id;
 int thread_running;
 
-#define CMD_DATA_CONTENT 0x80
-#define CMD_DATA_HEADER 0x81
-#define CMD_DATA_FOOTER 0x82
-#define MAX_REV_CONTENT_LEN 1024
+#define MAX_REV_CONTENT_LEN 1024 * 1024
 unsigned char rev_content[MAX_REV_CONTENT_LEN];
 int rev_content_index;
-int rev_is_cmd = 1;
-unsigned char rev_current_cmd;
 
-#define MAX_SEND_DATA_LEN 1024
-unsigned char send_data[MAX_SEND_DATA_LEN];
+extern int auto_update;
 
 int tcpserver_init(void) {
 	int ret;
@@ -120,67 +116,34 @@ void tcpserver_run(void) {
 void tcpserver_data_decode(unsigned char *buf, size_t len) {
     int i;
     for (i = 0; i < len; i ++) {
-    	if (rev_is_cmd) {
-    		if (buf[i] == CMD_DATA_CONTENT || buf[i] == CMD_DATA_HEADER || buf[i] == CMD_DATA_FOOTER) {
-    			rev_current_cmd = buf[i];
-    			rev_is_cmd = 0;
-    		}
-    	} else {
-    		switch (rev_current_cmd) {
-    		case CMD_DATA_CONTENT:
-    			rev_content[rev_content_index] = buf[i];
-    			rev_content_index ++;
-    			if (rev_content_index > MAX_REV_CONTENT_LEN) rev_content_index = 0;
-    			break;
-    		case CMD_DATA_HEADER:
-    			// buf[i] is header data
-    			rev_content_index = 0;
-    			break;
-    		case CMD_DATA_FOOTER:
-    			// buf[i] is footer data
-                tcpserver_content_decode(rev_content, rev_content_index);
-
-    			rev_content_index = 0;
-    			break;
-
-    		default:
-    			break;
-    		}
-			rev_is_cmd = 1;
-    	}
+		if (buf[i] == '\n') {
+			rev_content[rev_content_index] = "\0";
+			rev_content_index ++;
+			if (rev_content_index > MAX_REV_CONTENT_LEN) rev_content_index = 0;
+			tcpserver_content_decode(rev_content);
+			rev_content_index = 0;
+		} else {
+			rev_content[rev_content_index] = buf[i];
+			rev_content_index ++;
+			if (rev_content_index > MAX_REV_CONTENT_LEN) rev_content_index = 0;
+		}
     }
 }
 
-void tcpserver_content_decode(unsigned char *buf, size_t len)
+void tcpserver_content_decode(unsigned char *buf)
 {
-    // json
+    cJSON *jsonRoot = cJSON_Parse(buf);
+	cJSON *rootFunc = cJSON_GetObjectItem(jsonRoot, "ctrl");
+	cJSON *ctrlVal;
+	if ((ctrlVal = cJSON_GetObjectItem(rootFunc, "auto_update")) != NULL) {
+		auto_update = ctrlVal->valueint;
+	}
 }
 
-int tcpserver_send(unsigned char *buf, size_t len)
+int tcpserver_send(unsigned char *buf)
 {
 	if (connectfd == -1) return -1;
-	if (len > MAX_SEND_DATA_LEN / 2) return -1;
-	int set_i = 0;
-	int i, send_len;
-	// Header
-	send_data[set_i] = CMD_DATA_HEADER;
-	set_i ++;
-	send_data[set_i] = 0x01;
-	set_i ++;
-	// Content
-	for (i = 0; i < len; i ++) {
-		send_data[set_i] = CMD_DATA_CONTENT;
-		set_i ++;
-		send_data[set_i] = buf[i];
-		set_i ++;
-	}
-	// Footer
-	send_data[set_i] = CMD_DATA_FOOTER;
-	set_i ++;
-	send_data[set_i] = 0x82;
-	set_i ++;
-	if ((send_len = send(connectfd, send_data, set_i, 0)) == -1) {
-		printf("send_len = %d\n", send_len);
+	if (send(connectfd, buf, strlen(buf), 0) == -1) {
 		perror("send failure\n");
 		return -1;
 	}
