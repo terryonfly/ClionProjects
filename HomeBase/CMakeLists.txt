@@ -3,7 +3,7 @@ project(HomeBase)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-set(SOURCE_FILES main.c TCPServer.c TCPServer.h cJSON.c cJSON.h TCPConnection.h TCPConnection.c)
+set(SOURCE_FILES main.c TCPServer.c TCPServer.h cJSON.c cJSON.h TCPConnection.h TCPConnection.c Sensor.h Sensor.c)
 add_executable(HomeBase ${SOURCE_FILES})
 
 target_link_libraries(HomeBase m)

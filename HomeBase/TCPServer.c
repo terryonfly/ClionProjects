@@ -96,6 +96,11 @@ void tcpserver_run(void) {
         connection_dev_count ++;
         fix_connection_list();
     }
+    int i;
+    for (i = 0; i < connection_dev_count; i ++) {
+        if (connection_dev[i]->thread_running)
+            tcpconnection_release(connection_dev[i]);
+    }
     close(listenfd);
 }
 
