@@ -60,6 +60,7 @@ void tcpconnection_run(struct tcp_connection *connection_dev) {
 //            break;
 //        }
 //    }
+    while (1);
     printf("connection did closed.\n");
 }
 
