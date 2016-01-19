@@ -64,6 +64,7 @@ void tcpconnection_run(struct tcp_connection *connection_dev) {
 }
 
 struct tcp_connection *tcpconnection_init(int fd) {
+    return NULL;
     int ret;
     struct tcp_connection *connection_dev;
     connection_dev->connectfd = fd;
