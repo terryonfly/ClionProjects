@@ -94,7 +94,7 @@ void tcpserver_run(void) {
 
         connection_dev[connection_dev_count] = tcpconnection_init(connectfd);
         connection_dev_count ++;
-        fix_connection_list();
+//        fix_connection_list();
     }
     close(listenfd);
 }
@@ -105,9 +105,10 @@ int tcpserver_send(unsigned char *buf) {
         if (connection_dev[i]->thread_running)
             tcpconnection_send(connection_dev[i], buf);
     }
+    return 0;
 }
 
-void fix_connection_list() {
+void fix_connection_list(void) {
     int i;
     int j;
     for (i = 0; i < connection_dev_count; i ++) {
