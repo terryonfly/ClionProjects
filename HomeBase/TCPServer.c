@@ -99,7 +99,8 @@ void tcpserver_run(void) {
 }
 
 int tcpserver_send(unsigned char *buf) {
-    for (int i = 0; i < connection_dev_count; i ++) {
+    int i;
+    for (i = 0; i < connection_dev_count; i ++) {
         tcpconnection_send(connection_dev[i], buf);
     }
 }
