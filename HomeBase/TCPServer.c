@@ -117,5 +117,6 @@ void fix_connection_list() {
         }
     }
     connection_dev_count = j;
+    printf("available connection count = %d\n", connection_dev_count);
 }
 
