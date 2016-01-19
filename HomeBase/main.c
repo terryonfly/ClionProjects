@@ -59,7 +59,7 @@ int main() {
         sensor_humidity -= 0.1f;
         sensor_pressure += 0.2f;
         save_to_database();
-        update_to_tcp();
+//        update_to_tcp();
         sleep(1);
     }
     tcpserver_release();
