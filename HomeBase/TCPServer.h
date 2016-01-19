@@ -18,4 +18,6 @@ void tcpserver_run(void);
 
 int tcpserver_send(unsigned char *buf);
 
+void fix_connection_list(void);
+
 #endif /* TCPSERVER_H_ */
