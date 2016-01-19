@@ -45,28 +45,27 @@ void tcpconnection_data_decode(struct tcp_connection *connection_dev, unsigned c
 }
 
 void tcpconnection_run(struct tcp_connection *connection_dev) {
-//    unsigned char buf[MAXRECVLEN];
-//
-//    int read_len;
-//    while(connection_dev->thread_running)
-//    {
-//        read_len = recv(connection_dev->connectfd, buf, MAXRECVLEN, 0);
-//        if (read_len > 0) {
-//            tcpconnection_data_decode(connection_dev, buf, read_len);
-//        } else {
-//            close(connection_dev->connectfd);
-//            connection_dev->connectfd = -1;
-//            connection_dev->thread_running = 0;
-//            break;
-//        }
-//    }
-    while (1);
+    unsigned char buf[MAXRECVLEN];
+
+    int read_len;
+    while(connection_dev->thread_running)
+    {
+        read_len = recv(connection_dev->connectfd, buf, MAXRECVLEN, 0);
+        if (read_len > 0) {
+            tcpconnection_data_decode(connection_dev, buf, read_len);
+        } else {
+            close(connection_dev->connectfd);
+            connection_dev->connectfd = -1;
+            connection_dev->thread_running = 0;
+            break;
+        }
+    }
     printf("connection did closed.\n");
 }
 
 struct tcp_connection *tcpconnection_init(int fd) {
     int ret;
-    struct tcp_connection *connection_dev;
+    struct tcp_connection *connection_dev = malloc(sizeof(struct tcp_connection));
     connection_dev->connectfd = fd;
     connection_dev->thread_running = 1;
     ret = pthread_create(&connection_dev->thread_id, NULL, (void *)tcpconnection_run, connection_dev);
