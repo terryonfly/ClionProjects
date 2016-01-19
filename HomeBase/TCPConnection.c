@@ -70,7 +70,6 @@ struct tcp_connection *tcpconnection_init(int fd) {
     connection_dev->connectfd = fd;
     connection_dev->thread_running = 1;
     ret = pthread_create(&connection_dev->thread_id, NULL, (void *)tcpconnection_run, connection_dev);
-    return NULL;
     if (ret != 0) {
         perror("Create pthread error!\n");
         return NULL;
