@@ -42,7 +42,7 @@ void update_to_tcp() {
 
     unsigned char *jsonBuffer = cJSON_Print(jsonRoot);
     cJSON_Delete(jsonRoot);
-    unsigned char *jsonBufferFormat = join_chars(jsonBuffer, "\n");
+    unsigned char *jsonBufferFormat = join_chars(jsonBuffer, "\r");
     tcpserver_send(jsonBufferFormat);
 }
 
