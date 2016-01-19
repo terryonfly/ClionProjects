@@ -10,8 +10,6 @@
 
 #include "TCPConnection.h"
 
-struct tcp_connection *connection_dev;
-
 int tcpserver_init(void);
 
 void tcpserver_release(void);

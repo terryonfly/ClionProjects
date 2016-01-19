@@ -23,10 +23,12 @@
 
 #define BACKLOG 1
 
-int connectfd;
-
 pthread_t thread_id;
 int thread_running;
+
+struct tcp_connection *connection_dev[1024];
+
+int connection_dev_count = 0;
 
 int tcpserver_init(void) {
 	int ret;
@@ -78,6 +80,8 @@ void tcpserver_run(void) {
     }
 
     addrlen = sizeof(client);
+
+    int connectfd;
     while(thread_running){
         if ((connectfd = accept(listenfd, (struct sockaddr *)&client, &addrlen)) == -1) {
             perror("accept() error. \n");
@@ -88,13 +92,15 @@ void tcpserver_run(void) {
         gettimeofday(&tv, NULL);
         printf("You got a connection from client's ip %s, port %d at time %d.%d\n", inet_ntoa(client.sin_addr), htons(client.sin_port), (int)tv.tv_sec, (int)tv.tv_usec);
 
-        connection_dev = tcpconnection_init(connectfd);
+        connection_dev[connection_dev_count] = tcpconnection_init(connectfd);
+        connection_dev_count ++;
     }
     close(listenfd);
 }
 
 int tcpserver_send(unsigned char *buf) {
-    if (connection_dev != NULL)
-        tcpconnection_send(connection_dev, buf);
+    for (int i = 0; i < connection_dev_count; i ++) {
+        tcpconnection_send(connection_dev[i], buf);
+    }
 }
 
