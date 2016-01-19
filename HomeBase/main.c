@@ -10,8 +10,6 @@
 
 int running = 1;
 
-int auto_update = 1;
-
 float sensor_temperature = 0.0;
 float sensor_humidity = 0.0;
 float sensor_pressure = 0.0;
@@ -22,11 +20,11 @@ void save_to_database() {
 
 unsigned char* join_chars(unsigned char *s1, unsigned char *s2)
 {
-    unsigned char *result = malloc(strlen(s1) + strlen(s2) + 1);
-    if (result == NULL) return "";
+    unsigned char *result = malloc(strlen((const char *)s1) + strlen((const char *)s2) + 1);
+    if (result == NULL) return NULL;
 
-    strcpy(result, s1);
-    strcat(result, s2);
+    strcpy((char *)result, (char *)s1);
+    strcat((char *)result, (char *)s2);
 
     return result;
 }
@@ -40,9 +38,9 @@ void update_to_tcp() {
     cJSON_AddNumberToObject(rootFunc, "pressure", sensor_pressure);
     cJSON_AddItemToObject(jsonRoot, "auto_data", rootFunc);
 
-    unsigned char *jsonBuffer = cJSON_Print(jsonRoot);
+    unsigned char *jsonBuffer = (unsigned char *)cJSON_Print(jsonRoot);
     cJSON_Delete(jsonRoot);
-    unsigned char *jsonBufferFormat = join_chars(jsonBuffer, "\r");
+    unsigned char *jsonBufferFormat = join_chars(jsonBuffer, (unsigned char *)"\r");
     tcpserver_send(jsonBufferFormat);
 }
 
@@ -57,13 +55,11 @@ int main() {
     signal(SIGTERM, cs);// kill
     tcpserver_init();
     while (running) {
-        if (auto_update) {
-            sensor_temperature += 0.1f;
-            sensor_humidity -= 0.1f;
-            sensor_pressure += 0.2f;
-            save_to_database();
-            update_to_tcp();
-        }
+        sensor_temperature += 0.1f;
+        sensor_humidity -= 0.1f;
+        sensor_pressure += 0.2f;
+        save_to_database();
+        update_to_tcp();
         sleep(1);
     }
     tcpserver_release();
