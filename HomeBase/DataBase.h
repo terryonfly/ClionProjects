@@ -5,4 +5,6 @@
 #ifndef HOMEBASE_DATABASE_H
 #define HOMEBASE_DATABASE_H
 
+void test();
+
 #endif //HOMEBASE_DATABASE_H

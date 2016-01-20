@@ -8,6 +8,7 @@
 #include "TCPServer.h"
 #include "cJSON.h"
 #include "Sensor.h"
+#include "DataBase.h"
 
 int running = 1;
 
@@ -57,6 +58,7 @@ int main() {
     printf("=== robot start ===\n");
     signal(SIGINT, cs);// ctrl+c
     signal(SIGTERM, cs);// kill
+    test();
     tcpserver_init();
 #ifndef TEST
     while ((cdc_d = cdc_dev_open()) == NULL) {
