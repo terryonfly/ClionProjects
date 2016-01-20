@@ -23,7 +23,7 @@ void save_to_database() {
     char *sql = malloc(512);
     sprintf(sql, sql_format, cdc_d->sensor_temperature, cdc_d->sensor_humidity, cdc_d->sensor_pressure);
     printf("sql = %s\n", sql);
-//    database_insert(sql);
+    database_insert(sql);
 }
 
 unsigned char* join_chars(unsigned char *s1, unsigned char *s2)
@@ -63,7 +63,6 @@ int main() {
     printf("=== robot start ===\n");
     signal(SIGINT, cs);// ctrl+c
     signal(SIGTERM, cs);// kill
-    database_init();
     tcpserver_init();
 #ifndef TEST
     while ((cdc_d = cdc_dev_open()) == NULL) {
