@@ -12,8 +12,7 @@
 #include "DataBase.h"
 
 void test() {
-    char *begin = "\n+--------------BEGIN---------------+\n\n";
-    printf(begin);
+    printf("\n+--------------BEGIN---------------+\n\n");
 
     MYSQL *conn;
     MYSQL_RES *res;
@@ -32,11 +31,10 @@ void test() {
    */
     if (!mysql_real_connect(conn, server, user, password, database, 0, NULL, CLIENT_MULTI_RESULTS)) {
         fprintf(stderr, "%s\n", mysql_error(conn));
-        exit(1);
+        return;
     }
 
-    char *tell = "SQL Table Query...\n";
-    printf(tell);
+    printf("SQL Table Query...\n");
     // SQL 普通表查询
     char *sql = "select * from `sensors`.`weather`";
     if (mysql_query(conn, sql)) {
@@ -53,6 +51,5 @@ void test() {
 
     mysql_close(conn);
 
-    char *end = "+--------------END----------------+\n";
-    printf(end);
+    printf("+--------------END----------------+\n");
 }
