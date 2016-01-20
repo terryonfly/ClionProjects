@@ -14,11 +14,18 @@ struct tcp_connection {
     unsigned char rev_content[MAX_REV_CONTENT_LEN];
     int rev_content_index;
     int auto_update;
+    int bad_rev;
 };
 
 struct tcp_connection *tcpconnection_init(int fd);
 
 void tcpconnection_release(struct tcp_connection *connection_dev);
+
+void *tcpconnection_run(void *arg);
+
+void tcpconnection_data_decode(struct tcp_connection *connection_dev, unsigned char *buf, size_t len);
+
+void tcpconnection_content_decode(struct tcp_connection *connection_dev, unsigned char *buf);
 
 int tcpconnection_send(struct tcp_connection *connection_dev, unsigned char *buf);
 

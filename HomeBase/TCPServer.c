@@ -19,7 +19,7 @@
 #include "TCPServer.h"
 #include "cJSON.h"
 
-#define PORT 8888
+#define PORT 9999
 
 #define BACKLOG 1
 
@@ -85,12 +85,13 @@ void tcpserver_run(void) {
     while(thread_running){
         if ((connectfd = accept(listenfd, (struct sockaddr *)&client, &addrlen)) == -1) {
             perror("accept() error. \n");
-            return;
+            break;
         }
 
         struct timeval tv;
         gettimeofday(&tv, NULL);
-        printf("You got a connection from client's ip %s, port %d at time %d.%d\n", inet_ntoa(client.sin_addr), htons(client.sin_port), (int)tv.tv_sec, (int)tv.tv_usec);
+        printf("fd[%d] You got a connection from client's ip %s, port %d at time %d.%d\n",
+               connectfd, inet_ntoa(client.sin_addr), htons(client.sin_port), (int)tv.tv_sec, (int)tv.tv_usec);
 
         connection_dev[connection_dev_count] = tcpconnection_init(connectfd);
         connection_dev_count ++;
@@ -118,7 +119,8 @@ void fix_connection_list(void) {
     int j = 0;
     for (i = 0; i < connection_dev_count; i ++) {
         if (connection_dev[i]->thread_running) {
-            connection_dev[j] = connection_dev[i];
+            if (j < i)
+                connection_dev[j] = connection_dev[i];
             j ++;
         }
     }

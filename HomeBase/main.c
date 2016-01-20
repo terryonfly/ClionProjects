@@ -43,7 +43,7 @@ void update_to_tcp() {
     unsigned char *jsonBuffer = (unsigned char *)cJSON_Print(jsonRoot);
     cJSON_Delete(jsonRoot);
     unsigned char *jsonBufferFormat = join_chars(jsonBuffer, (unsigned char *)"\r");
-    tcpserver_send(jsonBufferFormat);
+//    tcpserver_send(jsonBufferFormat);
 }
 
 void cs(int n) {
@@ -51,17 +51,32 @@ void cs(int n) {
     running = 0;
 }
 
+#define TEST
+
 int main() {
     printf("=== robot start ===\n");
     signal(SIGINT, cs);// ctrl+c
     signal(SIGTERM, cs);// kill
     tcpserver_init();
+#ifndef TEST
     while ((cdc_d = cdc_dev_open()) == NULL) {
         printf("Retry connect to cdc\n");
         sleep(1);
     }
+#else
+    cdc_d = malloc(sizeof(struct cdc_dev));
+    memset(cdc_d, 0, sizeof(sizeof(struct cdc_dev)));
+#endif
     while (running) {
+#ifndef TEST
         cdc_dev_read_sensor(cdc_d);
+#else
+        cdc_d->updated = 1;
+        cdc_d->sensor_temperature += 0.1;
+        cdc_d->sensor_humidity -= 0.1;
+        cdc_d->sensor_pressure += 0.3;
+        usleep(999 * 1000);
+#endif
         if (cdc_d->updated) {
             save_to_database();
             update_to_tcp();

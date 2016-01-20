@@ -16,15 +16,52 @@
 #include "TCPConnection.h"
 #include "cJSON.h"
 
-#define MAXRECVLEN 1024
+#define MAXRECVLEN 1024 * 1024
 
-void tcpconnection_content_decode(struct tcp_connection *connection_dev, unsigned char *buf) {
-    cJSON *jsonRoot = cJSON_Parse((char *)buf);
-    cJSON *rootFunc = cJSON_GetObjectItem(jsonRoot, "ctrl");
-    cJSON *ctrlVal;
-    if ((ctrlVal = cJSON_GetObjectItem(rootFunc, "auto_update")) != NULL) {
-        connection_dev->auto_update = ctrlVal->valueint;
+void fix_connection_list(void);
+
+struct tcp_connection *tcpconnection_init(int fd) {
+    int ret;
+    struct tcp_connection *connection_dev = malloc(sizeof(struct tcp_connection));
+    connection_dev->connectfd = fd;
+    connection_dev->thread_running = 1;
+    ret = pthread_create(&connection_dev->thread_id, NULL, (void *)tcpconnection_run, (void *)connection_dev);
+    if (ret != 0) {
+        perror("Create pthread error!\n");
+        return NULL;
     }
+    return connection_dev;
+}
+
+void tcpconnection_release(struct tcp_connection *connection_dev) {
+    printf("Release pthread\n");
+    connection_dev->thread_running = 0;
+    pthread_join(connection_dev->thread_id, NULL);
+}
+
+void *tcpconnection_run(void *arg) {
+    struct tcp_connection *connection_dev = (struct tcp_connection *)arg;
+    unsigned char *buf = malloc(MAXRECVLEN);
+
+    int read_len;
+    while(connection_dev->thread_running) {
+        read_len = recv(connection_dev->connectfd, buf, MAXRECVLEN, 0);
+        if (read_len >= MAXRECVLEN) {
+            connection_dev->bad_rev = 1;
+            printf("Rev bad\n");
+            continue;
+        } else if (read_len > 0) {
+            connection_dev->bad_rev = 0;
+            tcpconnection_data_decode(connection_dev, buf, read_len);
+        } else {
+            connection_dev->thread_running = 0;
+            break;
+        }
+    }
+    free(buf);
+    close(connection_dev->connectfd);
+    printf("connection did closed.\n");
+    return NULL;
 }
 
 void tcpconnection_data_decode(struct tcp_connection *connection_dev, unsigned char *buf, size_t len) {
@@ -44,42 +81,13 @@ void tcpconnection_data_decode(struct tcp_connection *connection_dev, unsigned c
     }
 }
 
-void tcpconnection_run(struct tcp_connection *connection_dev) {
-    unsigned char buf[MAXRECVLEN];
-
-    int read_len;
-    while(connection_dev->thread_running)
-    {
-        read_len = recv(connection_dev->connectfd, buf, MAXRECVLEN, 0);
-        if (read_len > 0) {
-            tcpconnection_data_decode(connection_dev, buf, read_len);
-        } else {
-            close(connection_dev->connectfd);
-            connection_dev->connectfd = -1;
-            connection_dev->thread_running = 0;
-            break;
-        }
+void tcpconnection_content_decode(struct tcp_connection *connection_dev, unsigned char *buf) {
+    cJSON *jsonRoot = cJSON_Parse((char *)buf);
+    cJSON *rootFunc = cJSON_GetObjectItem(jsonRoot, "ctrl");
+    cJSON *ctrlVal;
+    if ((ctrlVal = cJSON_GetObjectItem(rootFunc, "auto_update")) != NULL) {
+        connection_dev->auto_update = ctrlVal->valueint;
     }
-    printf("connection did closed.\n");
-}
-
-struct tcp_connection *tcpconnection_init(int fd) {
-    int ret;
-    struct tcp_connection *connection_dev = malloc(sizeof(struct tcp_connection));
-    connection_dev->connectfd = fd;
-    connection_dev->thread_running = 1;
-    ret = pthread_create(&connection_dev->thread_id, NULL, (void *)tcpconnection_run, connection_dev);
-    if (ret != 0) {
-        perror("Create pthread error!\n");
-        return NULL;
-    }
-    return connection_dev;
-}
-
-void tcpconnection_release(struct tcp_connection *connection_dev) {
-    printf("Release pthread\n");
-    connection_dev->thread_running = 0;
-    pthread_join(connection_dev->thread_id, NULL);
 }
 
 int tcpconnection_send(struct tcp_connection *connection_dev, unsigned char *buf) {
