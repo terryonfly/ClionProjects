@@ -13,7 +13,7 @@
 
 void database_insert(char *sql) {
     MYSQL *conn;
-    char *server = "robot.mokfc.com";
+    char *server = "localhost";
     char *user = "root";
     char *password = "513939";
     char *database = "sensors";
