@@ -64,6 +64,7 @@ int main() {
     signal(SIGINT, cs);// ctrl+c
     signal(SIGTERM, cs);// kill
     database_init();
+    printf("check 1\n");
     tcpserver_init();
 #ifndef TEST
     while ((cdc_d = cdc_dev_open()) == NULL) {
