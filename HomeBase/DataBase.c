@@ -11,45 +11,44 @@
 
 #include "DataBase.h"
 
-void test() {
-    printf("\n+--------------BEGIN---------------+\n\n");
+MYSQL *conn;
+MYSQL_RES *res;
+MYSQL_ROW row;
+char *server = "robot.mokfc.com";
+char *user = "root";
+char *password = "513939";
+char *database = "sensors";
 
-    MYSQL *conn;
-    MYSQL_RES *res;
-    MYSQL_ROW row;
-    char *server = "robot.mokfc.com";
-    char *user = "root";
-    char *password = "513939";
-    char *database = "sensors";
-
-    conn = mysql_init(NULL); /* Connect to database */
-
-    /*
-    * CLIENT_MULTI_RESULTS
-    * 通知服务器，客户端能够处理来自多语句执行或存储程序的多个结果集。
-    * 如果设置了CLIENT_MULTI_STATEMENTS，将自动设置它。
-   */
+void database_init() {
+    conn = mysql_init(NULL);
     if (!mysql_real_connect(conn, server, user, password, database, 0, NULL, CLIENT_MULTI_RESULTS)) {
         fprintf(stderr, "%s\n", mysql_error(conn));
         return;
     }
+}
 
-    printf("SQL Table Query...\n");
-    // SQL 普通表查询
+void database_release() {
+    mysql_close(conn);
+}
+
+void database_query() {
     char *sql = "select * from `sensors`.`weather`";
     if (mysql_query(conn, sql)) {
         fprintf(stderr, "%s\n", mysql_error(conn));
         return;
     }
     res = mysql_use_result(conn);
-    printf("SqlCommand:%s", sql);
-    printf("\n");
+    printf("SQL Command:%s\n", sql);
     while ((row = mysql_fetch_row(res)) != NULL) {
-        printf("PassWord:%s \n\n", row[1]);
+        printf("Row[1] : %s\n", row[1]);
     }
     mysql_free_result(res);
+}
 
-    mysql_close(conn);
-
-    printf("+--------------END----------------+\n");
+void database_insert(char *sql) {
+    if (mysql_query(conn, sql)) {
+        printf("执行插入失败");
+    } else {
+        printf("插入成功,受影响行数:%d\n", (int)mysql_affected_rows(conn));
+    }
 }

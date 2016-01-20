@@ -19,6 +19,11 @@ void save_to_database() {
            cdc_d->sensor_temperature,
            cdc_d->sensor_humidity,
            cdc_d->sensor_pressure);
+    char *sql_format = "insert into `sensors`.`weather` ( `id`, `temperature`, `humidity`, `pressure`, `time`) values ( NULL, '%f', '%f', '%f', Now());";
+    char *sql = malloc(512);
+    sprintf(sql, sql_format, cdc_d->sensor_temperature, cdc_d->sensor_humidity, cdc_d->sensor_pressure);
+    printf("sql = %s\n", sql);
+    database_insert(sql);
 }
 
 unsigned char* join_chars(unsigned char *s1, unsigned char *s2)
@@ -58,7 +63,7 @@ int main() {
     printf("=== robot start ===\n");
     signal(SIGINT, cs);// ctrl+c
     signal(SIGTERM, cs);// kill
-    test();
+    database_init();
     tcpserver_init();
 #ifndef TEST
     while ((cdc_d = cdc_dev_open()) == NULL) {
@@ -88,6 +93,7 @@ int main() {
     }
     cdc_dev_close(cdc_d);
     tcpserver_release();
+    database_release();
     printf("==== robot end ====\n");
     return 0;
 }
