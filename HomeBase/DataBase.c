@@ -25,6 +25,7 @@ void database_init() {
         fprintf(stderr, "%s\n", mysql_error(conn));
         return;
     }
+    printf("database_init finished\n");
 }
 
 void database_release() {
