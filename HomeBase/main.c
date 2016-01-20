@@ -43,7 +43,7 @@ void update_to_tcp() {
     unsigned char *jsonBuffer = (unsigned char *)cJSON_Print(jsonRoot);
     cJSON_Delete(jsonRoot);
     unsigned char *jsonBufferFormat = join_chars(jsonBuffer, (unsigned char *)"\r");
-//    tcpserver_send(jsonBufferFormat);
+    tcpserver_send(jsonBufferFormat);
 }
 
 void cs(int n) {
@@ -51,7 +51,7 @@ void cs(int n) {
     running = 0;
 }
 
-#define TEST
+//#define TEST
 
 int main() {
     printf("=== robot start ===\n");
