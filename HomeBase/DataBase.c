@@ -13,8 +13,6 @@
 
 void database_insert(char *sql) {
     MYSQL *conn;
-    MYSQL_RES *res;
-    MYSQL_ROW row;
     char *server = "robot.mokfc.com";
     char *user = "root";
     char *password = "513939";
@@ -26,10 +24,11 @@ void database_insert(char *sql) {
         return;
     }
 
+    printf("will insert\n");
     if (mysql_query(conn, sql)) {
-        printf("执行插入失败");
+        printf("insert failure\n");
     } else {
-        printf("插入成功,受影响行数:%d\n", (int)mysql_affected_rows(conn));
+        printf("insert %d rows\n", (int)mysql_affected_rows(conn));
     }
 
     mysql_close(conn);
