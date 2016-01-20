@@ -57,7 +57,7 @@ void cs(int n) {
     running = 0;
 }
 
-#define TEST
+//#define TEST
 
 int main() {
     printf("=== robot start ===\n");
