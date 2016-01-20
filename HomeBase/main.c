@@ -63,7 +63,7 @@ int main() {
     printf("=== robot start ===\n");
     signal(SIGINT, cs);// ctrl+c
     signal(SIGTERM, cs);// kill
-//    database_init();
+    database_init();
     tcpserver_init();
 #ifndef TEST
     while ((cdc_d = cdc_dev_open()) == NULL) {
