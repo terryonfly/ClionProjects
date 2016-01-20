@@ -14,7 +14,10 @@ int running = 1;
 struct cdc_dev *cdc_d;
 
 void save_to_database() {
-
+    printf("temp:%14.10fdegC hum:%14.10f%% pres:%14.10fkPa\n",
+           cdc_d->sensor_temperature,
+           cdc_d->sensor_humidity,
+           cdc_d->sensor_pressure);
 }
 
 unsigned char* join_chars(unsigned char *s1, unsigned char *s2)

@@ -16,7 +16,7 @@
 #include "Sensor.h"
 #include "cJSON.h"
 
-#define SERIAL_DEV "/dev/ttyACM0"
+#define SERIAL_DEV "/dev/ttyUSB0"
 
 static int speed_arr[] = { B115200, B57600, B38400, B19200, B9600, B4800, B2400, B1800,
                            B1200, B600, B300, B200, B150, B134, B110, B75, B50};
@@ -36,6 +36,7 @@ int open_serial(const char *dev_path) {
         printf("open %s failed\n", str);
         return -1;
     }
+    printf("open %s successed\n", str);
 
     return fd;
 }
@@ -203,7 +204,7 @@ struct cdc_dev *cdc_dev_open() {
         return NULL;
     }
     int ret;
-    ret = set_speed(fd_cdc, 115200);
+    ret = set_speed(fd_cdc, 57600);
     if (ret == -1) {
         printf("Set speed failed : %d\n", ret);
         return NULL;
@@ -232,7 +233,7 @@ int cdc_dev_read(struct cdc_dev *cdc_d, unsigned char *data, int data_len, int *
 {
     *actual = read(cdc_d->fd, data, data_len);
     int ret;
-    ret = (*actual == data_len) ? 0 : -1;
+    ret = (*actual > 0) ? 0 : -1;
     return ret;
 }
 
@@ -246,15 +247,14 @@ void cdc_dev_read_sensor(struct cdc_dev *cdc_d) {
 
 void sensor_content_decode(struct cdc_dev *cdc_d, unsigned char *buf) {
     cJSON *jsonRoot = cJSON_Parse((char *)buf);
-    cJSON *rootFunc = cJSON_GetObjectItem(jsonRoot, "sensors");
     cJSON *ctrlVal;
-    if ((ctrlVal = cJSON_GetObjectItem(rootFunc, "temperature")) != NULL) {
+    if ((ctrlVal = cJSON_GetObjectItem(jsonRoot, "temperature")) != NULL) {
         cdc_d->sensor_temperature = ctrlVal->valuedouble;
     }
-    if ((ctrlVal = cJSON_GetObjectItem(rootFunc, "humidity")) != NULL) {
+    if ((ctrlVal = cJSON_GetObjectItem(jsonRoot, "humidity")) != NULL) {
         cdc_d->sensor_humidity = ctrlVal->valuedouble;
     }
-    if ((ctrlVal = cJSON_GetObjectItem(rootFunc, "pressure")) != NULL) {
+    if ((ctrlVal = cJSON_GetObjectItem(jsonRoot, "pressure")) != NULL) {
         cdc_d->sensor_pressure = ctrlVal->valuedouble;
     }
     cdc_d->updated = 1;
