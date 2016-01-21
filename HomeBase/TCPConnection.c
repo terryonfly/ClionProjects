@@ -103,8 +103,6 @@ void tcpconnection_sync_history(struct tcp_connection *connection_dev) {
     int page_size = 1000;
     while ((ret = database_get_history(history_temp, history_humi, history_pres, HISTORY_LEN, "2016-01-21 15:00", "2016-01-21 16:00", page, page_size)) != 0) {
         if (ret > 0) {
-            page ++;
-        } else {
             for (i = 0; i < ret; i ++) {
                 cJSON *jsonRoot = cJSON_CreateObject();
                 cJSON *rootFunc;
@@ -126,6 +124,7 @@ void tcpconnection_sync_history(struct tcp_connection *connection_dev) {
                 }
                 printf("3\n");
             }
+            page ++;
         }
     }
     connection_dev->sync_finished = 1;
