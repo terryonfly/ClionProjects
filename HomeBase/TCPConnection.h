@@ -15,6 +15,7 @@ struct tcp_connection {
     int rev_content_index;
     int auto_update;
     int bad_rev;
+    int sync_finished;
 };
 
 struct tcp_connection *tcpconnection_init(int fd);

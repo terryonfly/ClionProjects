@@ -15,6 +15,7 @@
 
 #include "TCPConnection.h"
 #include "cJSON.h"
+#include "DataBase.h"
 
 #define MAXRECVLEN 1024 * 1024
 
@@ -41,8 +42,9 @@ void tcpconnection_release(struct tcp_connection *connection_dev) {
 
 void *tcpconnection_run(void *arg) {
     struct tcp_connection *connection_dev = (struct tcp_connection *)arg;
-    unsigned char *buf = malloc(MAXRECVLEN);
+    tcpconnection_sync_history(connection_dev);
 
+    unsigned char *buf = malloc(MAXRECVLEN);
     int read_len;
     while(connection_dev->thread_running) {
         read_len = recv(connection_dev->connectfd, buf, MAXRECVLEN, 0);
@@ -90,7 +92,43 @@ void tcpconnection_content_decode(struct tcp_connection *connection_dev, unsigne
     }
 }
 
+#define HISTORY_LEN (60 * 60)
+
+void tcpconnection_sync_history(struct tcp_connection *connection_dev) {
+    float *history_temp = malloc(sizeof(float) * HISTORY_LEN);
+    float *history_humi = malloc(sizeof(float) * HISTORY_LEN);
+    float *history_pres = malloc(sizeof(float) * HISTORY_LEN);
+    int ret, i;
+    int page = 0;
+    int page_size = 1000;
+    while ((ret = database_get_history(history_temp, history_humi, history_pres, HISTORY_LEN, "2016-01-21 15:00", "2016-01-21 16:00", page, page_size)) != 0) {
+        if (ret > 0) {
+            page ++;
+        } else {
+            for (i = 0; i < ret; i ++) {
+                cJSON *jsonRoot = cJSON_CreateObject();
+                cJSON *rootFunc;
+                rootFunc = cJSON_CreateObject();
+                cJSON_AddNumberToObject(rootFunc, "temperature", history_temp[i]);
+                cJSON_AddNumberToObject(rootFunc, "humidity", history_humi[i]);
+                cJSON_AddNumberToObject(rootFunc, "pressure", history_pres[i]);
+                cJSON_AddItemToObject(jsonRoot, "auto_data", rootFunc);
+
+                unsigned char *jsonBuffer = (unsigned char *)cJSON_Print(jsonRoot);
+                cJSON_Delete(jsonRoot);
+                unsigned char *jsonBufferFormat = join_chars(jsonBuffer, (unsigned char *)"\r");
+                tcpconnection_send(connection_dev, jsonBufferFormat);
+            }
+        }
+    }
+    connection_dev->sync_finished = 1;
+}
+
 int tcpconnection_send(struct tcp_connection *connection_dev, unsigned char *buf) {
+    if (connection_dev->sync_finished != 1) {
+        // add to tmp
+        return 0;
+    }
     if (connection_dev->connectfd == -1) return -1;
     if (send(connection_dev->connectfd, buf, strlen((const char *)buf), 0) == -1) {
         perror("send failure\n");

@@ -748,3 +748,16 @@ void cJSON_Minify(char *json)
 	}
 	*into=0;	/* and null-terminate. */
 }
+
+/* Self Edit */
+
+unsigned char* join_chars(unsigned char *s1, unsigned char *s2)
+{
+	unsigned char *result = malloc(strlen((const char *)s1) + strlen((const char *)s2) + 1);
+	if (result == NULL) return NULL;
+
+	strcpy((char *)result, (char *)s1);
+	strcat((char *)result, (char *)s2);
+
+	return result;
+}

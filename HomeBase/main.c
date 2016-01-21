@@ -5,6 +5,7 @@
 #include <signal.h>
 #include <math.h>
 
+#include "Platform.h"
 #include "TCPServer.h"
 #include "cJSON.h"
 #include "Sensor.h"
@@ -19,21 +20,12 @@ void save_to_database() {
            cdc_d->sensor_temperature,
            cdc_d->sensor_humidity,
            cdc_d->sensor_pressure);
+#ifdef USE_MYSQL
     char *sql_format = "insert into `sensors`.`weather` ( `id`, `temperature`, `humidity`, `pressure`, `time`) values ( NULL, '%f', '%f', '%f', Now());";
     char *sql = malloc(512);
     sprintf(sql, sql_format, cdc_d->sensor_temperature, cdc_d->sensor_humidity, cdc_d->sensor_pressure);
     database_insert(sql);
-}
-
-unsigned char* join_chars(unsigned char *s1, unsigned char *s2)
-{
-    unsigned char *result = malloc(strlen((const char *)s1) + strlen((const char *)s2) + 1);
-    if (result == NULL) return NULL;
-
-    strcpy((char *)result, (char *)s1);
-    strcat((char *)result, (char *)s2);
-
-    return result;
+#endif
 }
 
 void update_to_tcp() {
@@ -56,14 +48,12 @@ void cs(int n) {
     running = 0;
 }
 
-//#define TEST
-
 int main() {
     printf("=== robot start ===\n");
     signal(SIGINT, cs);// ctrl+c
     signal(SIGTERM, cs);// kill
     tcpserver_init();
-#ifndef TEST
+#ifndef TEST_CDC
     while ((cdc_d = cdc_dev_open()) == NULL) {
         printf("Retry connect to cdc\n");
         sleep(1);
@@ -73,7 +63,7 @@ int main() {
     memset(cdc_d, 0, sizeof(sizeof(struct cdc_dev)));
 #endif
     while (running) {
-#ifndef TEST
+#ifndef TEST_CDC
         cdc_dev_read_sensor(cdc_d);
 #else
         cdc_d->updated = 1;

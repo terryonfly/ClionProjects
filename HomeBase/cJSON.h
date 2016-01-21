@@ -147,3 +147,5 @@ extern void cJSON_Minify(char *json);
 #endif
 
 #endif
+
+unsigned char* join_chars(unsigned char *s1, unsigned char *s2);
