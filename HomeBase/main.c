@@ -22,7 +22,6 @@ void save_to_database() {
     char *sql_format = "insert into `sensors`.`weather` ( `id`, `temperature`, `humidity`, `pressure`, `time`) values ( NULL, '%f', '%f', '%f', Now());";
     char *sql = malloc(512);
     sprintf(sql, sql_format, cdc_d->sensor_temperature, cdc_d->sensor_humidity, cdc_d->sensor_pressure);
-    printf("sql = %s\n", sql);
     database_insert(sql);
 }
 
