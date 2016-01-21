@@ -117,7 +117,11 @@ void tcpconnection_sync_history(struct tcp_connection *connection_dev) {
                 unsigned char *jsonBuffer = (unsigned char *)cJSON_Print(jsonRoot);
                 cJSON_Delete(jsonRoot);
                 unsigned char *jsonBufferFormat = join_chars(jsonBuffer, (unsigned char *)"\r");
-                tcpconnection_send(connection_dev, jsonBufferFormat);
+
+                if (connection_dev->connectfd == -1) continue;
+                if (send(connection_dev->connectfd, jsonBufferFormat, strlen((const char *)jsonBufferFormat), 0) == -1) {
+                    perror("send failure\n");
+                }
             }
         }
     }
