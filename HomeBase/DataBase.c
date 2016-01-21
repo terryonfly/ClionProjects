@@ -53,7 +53,8 @@ int database_get_history(float *temperature, float *humidity, float *pressure, i
         return -1;
     }
 
-    char *sql_format = "select * from weather where time > '%s' and time < '%s' limit %d, %d";
+//    char *sql_format = "select * from weather where time > '%s' and time < '%s' limit %d, %d";
+    char *sql_format = "select * from weather limit %d, %d";
     char *sql = malloc(512);
     sprintf(sql, sql_format, time_min, time_max, page * page_size, page_size);
     if (mysql_query(conn, sql)) {
