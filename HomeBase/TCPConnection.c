@@ -92,7 +92,7 @@ void tcpconnection_content_decode(struct tcp_connection *connection_dev, unsigne
     }
 }
 
-#define HISTORY_LEN (60 * 60)
+#define HISTORY_LEN (1 * 60 * 60)
 
 void tcpconnection_sync_history(struct tcp_connection *connection_dev) {
     float *history_temp = malloc(sizeof(float) * HISTORY_LEN);
@@ -120,6 +120,7 @@ void tcpconnection_sync_history(struct tcp_connection *connection_dev) {
                 if (send(connection_dev->connectfd, jsonBufferFormat, strlen((const char *)jsonBufferFormat), 0) == -1) {
                     perror("send failure\n");
                 }
+                usleep(1000);
             }
             page ++;
         }
