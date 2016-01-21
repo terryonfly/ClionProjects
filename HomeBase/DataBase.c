@@ -65,9 +65,33 @@ int database_get_history(float *temperature, float *humidity, float *pressure, i
     printf("\n");
     int actual = 0;
     while ((row = mysql_fetch_row(res)) != NULL) {
-        temperature[actual] = row[1];
-        temperature[actual] = row[2];
-        temperature[actual] = row[3];
+        {
+            unsigned char i;
+            unsigned char *px = row[1];
+            void *pf;
+            pf = &(temperature[actual]);
+            for (i = 0; i < 4; i++) {
+                *((unsigned char *) pf + i) = *(px++);
+            }
+        }
+        {
+            unsigned char i;
+            unsigned char *px = row[2];
+            void *pf;
+            pf = &(humidity[actual]);
+            for (i = 0; i < 4; i++) {
+                *((unsigned char *) pf + i) = *(px++);
+            }
+        }
+        {
+            unsigned char i;
+            unsigned char *px = row[3];
+            void *pf;
+            pf = &(pressure[actual]);
+            for (i = 0; i < 4; i++) {
+                *((unsigned char *) pf + i) = *(px++);
+            }
+        }
         actual ++;
     }
     mysql_free_result(res);
