@@ -92,7 +92,7 @@ void tcpconnection_content_decode(struct tcp_connection *connection_dev, unsigne
     }
 }
 
-#define HISTORY_LEN (1 * 60 * 60)
+#define HISTORY_LEN (24 * 60 * 60)
 
 void tcpconnection_sync_history(struct tcp_connection *connection_dev) {
     float *history_temp = malloc(sizeof(float) * HISTORY_LEN);
@@ -100,28 +100,37 @@ void tcpconnection_sync_history(struct tcp_connection *connection_dev) {
     float *history_pres = malloc(sizeof(float) * HISTORY_LEN);
     int ret, i;
     int page = 0;
-    int page_size = 1000;
-    while ((ret = database_get_history(history_temp, history_humi, history_pres, HISTORY_LEN, "2016-01-21 15:00", "2016-01-21 16:00", page, page_size)) != 0) {
+    int page_size = 60;
+    while ((ret = database_get_history(history_temp, history_humi, history_pres, HISTORY_LEN, "2016-01-20 17:35", "2016-01-21 17:35", page, page_size)) != 0) {
         if (ret > 0) {
+            float history_temp_a = 0;
+            float history_humi_a = 0;
+            float history_pres_a = 0;
             for (i = 0; i < ret; i ++) {
-                cJSON *jsonRoot = cJSON_CreateObject();
-                cJSON *rootFunc;
-                rootFunc = cJSON_CreateObject();
-                cJSON_AddNumberToObject(rootFunc, "temperature", history_temp[i]);
-                cJSON_AddNumberToObject(rootFunc, "humidity", history_humi[i]);
-                cJSON_AddNumberToObject(rootFunc, "pressure", history_pres[i]);
-                cJSON_AddItemToObject(jsonRoot, "auto_data", rootFunc);
-
-                unsigned char *jsonBuffer = (unsigned char *)cJSON_Print(jsonRoot);
-                cJSON_Delete(jsonRoot);
-                unsigned char *jsonBufferFormat = join_chars(jsonBuffer, (unsigned char *)"\r");
-
-                if (connection_dev->connectfd == -1) continue;
-                if (send(connection_dev->connectfd, jsonBufferFormat, strlen((const char *)jsonBufferFormat), 0) == -1) {
-                    perror("send failure\n");
-                }
-                usleep(1000);
+                history_temp_a += history_temp[i];
+                history_humi_a += history_humi[i];
+                history_pres_a += history_pres[i];
             }
+            history_temp_a /= ret;
+            history_humi_a /= ret;
+            history_pres_a /= ret;
+            cJSON *jsonRoot = cJSON_CreateObject();
+            cJSON *rootFunc;
+            rootFunc = cJSON_CreateObject();
+            cJSON_AddNumberToObject(rootFunc, "temperature", history_temp_a);
+            cJSON_AddNumberToObject(rootFunc, "humidity", history_humi_a);
+            cJSON_AddNumberToObject(rootFunc, "pressure", history_pres_a);
+            cJSON_AddItemToObject(jsonRoot, "auto_data", rootFunc);
+
+            unsigned char *jsonBuffer = (unsigned char *)cJSON_Print(jsonRoot);
+            cJSON_Delete(jsonRoot);
+            unsigned char *jsonBufferFormat = join_chars(jsonBuffer, (unsigned char *)"\r");
+
+            if (connection_dev->connectfd == -1) continue;
+            if (send(connection_dev->connectfd, jsonBufferFormat, strlen((const char *)jsonBufferFormat), 0) == -1) {
+                perror("send failure\n");
+            }
+            usleep(10 * 1000);
             page ++;
         }
     }
