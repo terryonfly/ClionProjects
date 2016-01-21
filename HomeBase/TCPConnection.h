@@ -28,6 +28,8 @@ void tcpconnection_data_decode(struct tcp_connection *connection_dev, unsigned c
 
 void tcpconnection_content_decode(struct tcp_connection *connection_dev, unsigned char *buf);
 
+void tcpconnection_sync_history(struct tcp_connection *connection_dev);
+
 int tcpconnection_send(struct tcp_connection *connection_dev, unsigned char *buf);
 
 #endif //HOMEBASE_TCPCONNECTION_H
