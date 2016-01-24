@@ -130,9 +130,10 @@ void tcpconnection_sync_history(struct tcp_connection *connection_dev) {
             if (send(connection_dev->connectfd, jsonBufferFormat, strlen((const char *)jsonBufferFormat), 0) == -1) {
                 perror("send failure\n");
             }
-            usleep(10 * 1000);
             page ++;
+//            if (page >= 24 * 60) break;
         }
+        if (!connection_dev->thread_running) break;
     }
     connection_dev->sync_finished = 1;
 }

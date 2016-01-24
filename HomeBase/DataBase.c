@@ -73,6 +73,7 @@ int database_get_history(float *temperature, float *humidity, float *pressure, i
         actual ++;
     }
     mysql_free_result(res);
+    free(sql);
 
     mysql_close(conn);
     return actual;

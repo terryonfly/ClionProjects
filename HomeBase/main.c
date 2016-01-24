@@ -16,7 +16,7 @@ int running = 1;
 struct cdc_dev *cdc_d;
 
 void save_to_database() {
-    printf("temp:%14.10fdegC hum:%14.10f%% pres:%14.10fkPa\n",
+    printf("temp:%14.6fdegC hum:%14.6f%% pres:%14.6fhPa\n",
            cdc_d->sensor_temperature,
            cdc_d->sensor_humidity,
            cdc_d->sensor_pressure);
@@ -25,6 +25,7 @@ void save_to_database() {
     char *sql = malloc(512);
     sprintf(sql, sql_format, cdc_d->sensor_temperature, cdc_d->sensor_humidity, cdc_d->sensor_pressure);
     database_insert(sql);
+    free(sql);
 #endif
 }
 
