@@ -84,8 +84,11 @@ void tcpconnection_data_decode(struct tcp_connection *connection_dev, unsigned c
 }
 
 void tcpconnection_content_decode(struct tcp_connection *connection_dev, unsigned char *buf) {
+    if (strlen(buf) == 0) return;
     cJSON *jsonRoot = cJSON_Parse((char *)buf);
+    if (jsonRoot == NULL) return;
     cJSON *rootFunc = cJSON_GetObjectItem(jsonRoot, "ctrl");
+    if (rootFunc == NULL) return;
     cJSON *ctrlVal;
     if ((ctrlVal = cJSON_GetObjectItem(rootFunc, "auto_update")) != NULL) {
         connection_dev->auto_update = ctrlVal->valueint;
