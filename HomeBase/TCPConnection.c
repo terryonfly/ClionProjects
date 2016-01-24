@@ -104,7 +104,19 @@ void tcpconnection_sync_history(struct tcp_connection *connection_dev) {
     int ret, i;
     int page = 0;
     int page_size = 60;
-    while ((ret = database_get_history(history_temp, history_humi, history_pres, HISTORY_LEN, "2016-01-23 00:00", "2016-01-21 17:35", page, page_size)) != 0) {
+
+    char *time_min = malloc(64);
+    char *time_max = malloc(64);
+    time_t tCurTime = time(NULL);
+    struct tm *ptmCurTime = localtime(&tCurTime);
+
+    sprintf(time_min, "%04d-%02d-%02d %02d:%02d\n",
+           ptmCurTime->tm_year+1900, ptmCurTime->tm_mon+1, ptmCurTime->tm_mday - 1, ptmCurTime->tm_hour, ptmCurTime->tm_min);
+
+    sprintf(time_max, "%04d-%02d-%02d %02d:%02d\n",
+            ptmCurTime->tm_year+1900, ptmCurTime->tm_mon+1, ptmCurTime->tm_mday, ptmCurTime->tm_hour, ptmCurTime->tm_min);
+
+    while ((ret = database_get_history(history_temp, history_humi, history_pres, HISTORY_LEN, time_min, time_max, page, page_size)) != 0) {
         if (ret > 0) {
             float history_temp_a = 0;
             float history_humi_a = 0;
@@ -138,6 +150,8 @@ void tcpconnection_sync_history(struct tcp_connection *connection_dev) {
         }
         if (!connection_dev->thread_running) break;
     }
+    free(time_min);
+    free(time_max);
     connection_dev->sync_finished = 1;
 }
 
