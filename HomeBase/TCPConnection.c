@@ -104,7 +104,7 @@ void tcpconnection_sync_history(struct tcp_connection *connection_dev) {
     int ret, i;
     int page = 0;
     int page_size = 60;
-    while ((ret = database_get_history(history_temp, history_humi, history_pres, HISTORY_LEN, "2016-01-20 17:35", "2016-01-21 17:35", page, page_size)) != 0) {
+    while ((ret = database_get_history(history_temp, history_humi, history_pres, HISTORY_LEN, "2016-01-23 00:00", "2016-01-21 17:35", page, page_size)) != 0) {
         if (ret > 0) {
             float history_temp_a = 0;
             float history_humi_a = 0;
